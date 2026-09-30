@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { assetUrl } from '../assetUrl'
 import {
   PERK_SLOT_COUNT,
   apply,
@@ -175,14 +176,14 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
           {!slotsFull && (
             <div className="floor-intro-overlay" style={{ opacity: 1 }} aria-hidden>
               <img
-                src="/sprites/logo-name-sprite.png"
+                src={assetUrl('/sprites/logo-name-sprite.png')}
                 alt="RareDungeons"
                 className="floor-intro-logo"
               />
               <div className="floor-intro-round">
-                <img src="/sprites/floor-text.png" alt="Floor" className="floor-intro-round-label" />
+                <img src={assetUrl('/sprites/floor-text.png')} alt="Floor" className="floor-intro-round-label" />
                 <img
-                  src={`/sprites/${roundNum}.png`}
+                  src={assetUrl(`/sprites/${roundNum}.png`)}
                   alt={`Floor ${roundNum}`}
                   className="floor-intro-round-num"
                 />

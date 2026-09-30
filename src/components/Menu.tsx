@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { assetUrl } from '../assetUrl'
 import {
   HARD,
   SOFT,
@@ -76,7 +77,7 @@ export function Menu(props: Props) {
     <div className="menu-shell">
       <header className="top-bar">
         <div className="brand">
-          <img src="/logo-name.png" alt="RareDungeons" className="brand-logo-img" />
+          <img src={assetUrl('/logo-name.png')} alt="RareDungeons" className="brand-logo-img" />
         </div>
         <nav className="top-nav">
           <button type="button" className="nav-btn" onClick={() => setInfo('how')}>
@@ -131,7 +132,7 @@ export function Menu(props: Props) {
             <span className="action-title">PLAY</span>
           </button>
           <button type="button" className="card action-tile" onClick={() => setMode('create')}>
-            <img src="/dungeon-icon.png" alt="Dungeon" className="action-tile-icon" />
+            <img src={assetUrl('/dungeon-icon.png')} alt="Dungeon" className="action-tile-icon" />
             <span className="action-title">CREATE DUNGEON</span>
           </button>
         </div>
@@ -212,7 +213,7 @@ export function Menu(props: Props) {
               <span className="action-title">PLAY</span>
             </button>
             <button type="button" className="card action-tile" onClick={() => setMode('create')}>
-              <img src="/dungeon-icon.png" alt="Dungeon" className="action-tile-icon" />
+              <img src={assetUrl('/dungeon-icon.png')} alt="Dungeon" className="action-tile-icon" />
               <span className="action-title">CREATE DUNGEON</span>
             </button>
           </div>
@@ -245,7 +246,7 @@ export function Menu(props: Props) {
             <span className="tile-arrow history-arrow">→</span>
           </button>
           <section className="card mascot-card" aria-hidden>
-            <img src="/sprites/friend.png" alt="" className="mascot" />
+            <img src={assetUrl('/sprites/friend.png')} alt="" className="mascot" />
           </section>
         </aside>
       </div>
@@ -442,7 +443,7 @@ function InfoOverlay({ kind, onClose }: { kind: 'how' | 'economy'; onClose: () =
           <iframe
             className="info-article-frame"
             title="Rare Dungeons — Economic Potential"
-            src="/rare-dungeons-article.html"
+            src={assetUrl('/rare-dungeons-article.html')}
           />
         ) : (
           <div className="info-how">

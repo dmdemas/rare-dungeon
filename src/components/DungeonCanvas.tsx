@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { assetUrl } from '../assetUrl'
 import { MAP_H, MAP_W } from '../game/config'
 import { isCurrentlyVisible, sharpEyeRing } from '../game/fog'
 import {
@@ -1160,8 +1161,8 @@ export function DungeonCanvas({
       img.src = src
       slot.current = img
     }
-    load('/sprites/friend.png', friendImg)
-    load('/sprites/mob.png', mobImg)
+    load(assetUrl('/sprites/friend.png'), friendImg)
+    load(assetUrl('/sprites/mob.png'), mobImg)
   }, [])
 
   // Pulse Endurance ward / break flash between raid ticks

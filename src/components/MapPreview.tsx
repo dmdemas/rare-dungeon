@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { assetUrl } from '../assetUrl'
 import { BASE_VISION, MAP_H, MAP_W } from '../game/config'
 import {
   REF,
@@ -146,8 +147,8 @@ export function MapPreview({
       img.src = src
       slot.current = img
     }
-    load('/sprites/mob.png', mobImg)
-    if (!schematic) load('/sprites/friend.png', friendImg)
+    load(assetUrl('/sprites/mob.png'), mobImg)
+    if (!schematic) load(assetUrl('/sprites/friend.png'), friendImg)
   }, [schematic])
 
   useEffect(() => {

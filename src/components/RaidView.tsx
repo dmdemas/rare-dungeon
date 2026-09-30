@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { assetUrl } from '../assetUrl'
 import { BASE_STAMINA, DASH_JUMP_MS, DASH_THINK_MS, JUMP_MS, THINK_MS, lowStaminaTickFactor } from '../game/config'
 import { isCurrentlyVisible } from '../game/fog'
 import {
@@ -686,15 +687,15 @@ export function RaidView({
           >
             {/* Logo: "RareDungeons" name sprite */}
             <img
-              src="/sprites/logo-name-sprite.png"
+              src={assetUrl('/sprites/logo-name-sprite.png')}
               alt="RareDungeons"
               className="floor-intro-logo"
             />
             {/* Floor label + number below the logo */}
             <div className="floor-intro-round">
-              <img src="/sprites/floor-text.png" alt="Floor" className="floor-intro-round-label" />
+              <img src={assetUrl('/sprites/floor-text.png')} alt="Floor" className="floor-intro-round-label" />
               <img
-                src={`/sprites/${floorNum}.png`}
+                src={assetUrl(`/sprites/${floorNum}.png`)}
                 alt={`Floor ${floorNum}`}
                 className="floor-intro-round-num"
               />

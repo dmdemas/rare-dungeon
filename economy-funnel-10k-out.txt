@@ -1,0 +1,55 @@
+UNIFIED Soft→Hard funnel × 10000 sessions
+start bankroll $80 · Soft clearP 0.358 · Soft pot ~2.61×
+Hard entry $15 · TICKET risk×3 post×2 hold+0.12 W2 90/10
+Note: Soft→Hard convert is a behavior model (archetypes), not an econ output — bankroll gate still applies.
+
+══ Funnel Soft → Hard ══
+  Soft winners (≥1 clear)     9425  94.3%
+  Soft no-win                 575  5.8%
+  Tried Hard (any)            5364  53.6%
+  Soft win → Hard             5126 / 9425  = 54.4%  ★
+  No Soft win → Hard          238 / 575  = 41.4%
+  Soft win & stayed Soft-only 4299  43.0%
+
+  Convert Soft-win→Hard by archetype:
+    school_then_hard   n=4558 softWin=4408 hardAfterWin=3341 → 75.8%
+    cautious           n=2413 softWin=2392 hardAfterWin=832 → 34.8%
+    soft_lifer         n=1503 softWin=1492 hardAfterWin=179 → 12.0%
+    skip_school        n=1526 softWin=1133 hardAfterWin=774 → 68.3%
+
+══ Soft school ══
+  attempts 58690  clear/att 36.0%
+  spend $58690  won $55152  net $-3538
+  mean Soft PnL / player  $-0.35  median $0.35
+
+══ Hard chase (graduates) ══
+  attempts 29142  clear/att 17.6%
+  spend $571927  won $373451  net $-198476
+  pot × all wipes 4.85×  held k≥7 8.94× n=392
+  held jackpots (player view) 392
+  mean Hard PnL / graduate  $-37.00  median $-60.00
+  mean Hard PnL / all players $-19.85
+  $ Soft : $ Hard spend ratio  1 : 9.74
+
+══ Bankroll / viability ══
+  start $80
+  end mean $59.80  median $75.04  p10 $6  p90 $85
+  mean total PnL $-20.20  median $-4.96
+  bankrupt (<$1) 186  1.9%
+  ended ≥ start  3192  31.9%
+
+══ Hard owners + tickets (week) ══
+  Hard dungeons spawned/refilled ~6354
+  dungeon wipes 5130  claims 1223
+  owner bank ROI if claim 4.32×  n=1223
+  week pool$ $242524  ticket power 49387  burned 1972
+  Friend ticket $ 87169 (35.9%)  Owner ticket $ 155355 (64.1%)
+  rough owner EV/create (bank+tix vs invest, crude) $19.15
+
+══ Verdict ══
+  Soft→Hard after Soft win: 54.4% ✓ funnel alive (~half Soft winners graduate)
+  Soft clear band: ✓ (36.0%)
+  Hard harder than Soft: ✓
+  $ flows Soft→Hard (Hard spend > Soft): ✓ (9.74× Soft)
+  Held jackpot × band: ✓ (8.94×)
+  Player bankroll: median survives school+Hard bleed (median end $75)

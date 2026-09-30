@@ -1,0 +1,29 @@
+---
+description: Locked approved raid visual design — do not change
+alwaysApply: true
+---
+
+# Locked raid visuals (approved)
+
+This look is **final**. Do **not** change it unless the user explicitly asks.
+
+## Front platform (high apron)
+
+- Grid Demo C ramp: rails follow floor edges to canvas bottom, gradient fade-out, underside deck bands.
+- Geometry and colors in `drawPlatform` in `DungeonCanvas.tsx` are locked.
+- After drawing pit drops, redraw the platform so spill never covers the apron, then redraw floors.
+
+## Floor / entrance / exit
+
+- Floor fill/stroke, green entrance, distinct exit tile — keep as-is.
+
+## Pits / walls
+
+- Impassable `wall` = pit.
+- Far edge **not** adjoining floor → pure black (no grid).
+- Far edge adjoining floor → fade-out drop **style 4** only (`pitCliffStyle` default **4**).
+- Do not reintroduce multi-style demos or wall.png cliffs unless asked.
+
+## Grid REF
+
+- Locked trapezoid — see `dungeon-grid.mdc`. Never change REF numbers without explicit ask.

@@ -1,0 +1,58 @@
+---
+description: Corridor-safety rules for dangerous dungeon maps
+alwaysApply: true
+---
+
+# Corridor-Safety Rules (approved)
+
+Dangerous ("corridor") maps are identified at blueprint generation time.  
+**Do not change thresholds** without explicit ask.
+
+## Trigger — `isCorridor = true`
+
+```
+BFS pathLen (entrance→exit, floor tiles only) ≥ 18
+AND wall count ≥ 10
+```
+
+Computed once in `computeCorridorFlag` in `mapGen.ts`, stored as `blueprint.isCorridor`
+and copied to `raid.isCorridor` in `startRaid`.
+
+## All maps — ranged perks at lower edge
+
+Horde II–III and Walls roll the **upper** edge with `PERK_UPPER_EDGE_P` = **5 %**, else lower edge.
+Walls roll is fixed per dungeon + rank (`rollWallsTarget`, seeded by dungeon id) so Create preview = raid.
+
+## Рычаг 1 — Walls perk (pits, before dungeon scale)
+
+| Rank | Normal (95 % / 5 %) | Corridor |
+|------|--------|----------|
+| 1    | 4 / 6  | **4** |
+| 2    | 6 / 8  | **6** |
+| 3    | 8 / 10 | **8** |
+
+`WALLS_EXTRA_MIN` / `WALLS_EXTRA_MAX` in `effects.ts`; corridor sets `wallsExtraUpper = wallsExtra`.
+
+## Рычаг 2 — Horde perk
+
+Rank 2–3: **2** mobs (95 %) / 3 (5 %). Corridor: always **2**. Rank 1: always 1.
+Controlled by `rollHordeCount(rank, rng, dangerMap)`.
+
+## Map generation weights (`config.ts`)
+
+- Start mobs (max **4**; a 5th only via Horde perk), cumulative: ≥1 **100 %**, ≥2 **50 %**, ≥3 **15 %**, 4 = **2.5 %**.
+- Base pits 5–12: 5 22 % · 6 19.5 · 7 17 · 8 14.5 · 9 12 · 10 7.5 · 11 5 · 12 **2.5 %**.
+- Changing these invalidates `approvedSeeds.ts` → re-run `scripts/calibrate-pool.ts`.
+
+## Рычаг 3 — Reduced offer probability
+
+When `dangerMap = true` passed to `rollOffer`:
+- `horde` offer weight × **0.50** (−50 %)
+- `walls` offer weight × **0.65** (−35 %)
+
+## Threading
+
+- `CreateDungeon.tsx` → `rollOffer(..., selected.isCorridor)`
+- `RaidView.tsx` → `rollPredefinedDungeonPerks(rng, blueprint.isCorridor)`
+- `sync.ts` → `derivePerkMods(perks, { ..., dangerMap: raid.isCorridor })`
+- `sync.ts` → `rollHordeCount(rank, rng, raid.isCorridor)`

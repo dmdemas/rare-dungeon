@@ -1,0 +1,28 @@
+---
+description: Locked dungeon walk grid + canonical visual style C
+alwaysApply: true
+---
+
+# Locked walk grid (4×15)
+
+The floor trapezoid in `src/game/gridGeom.ts` (`REF`, shared by raid + map previews) is calibrated and approved. **Do not change these numbers** unless the user explicitly asks to recalibrate the grid.
+
+```
+w: 1777, h: 885
+nearY: 742, nearL: 762, nearR: 1016
+farY: 108, farL: 790, farR: 985
+```
+
+- Characters and step highlights must use `cellQuad` / `cellCenter` from this REF.
+- Allowed without asking: floor color tweaks, sprites, fog, UI.
+- Not allowed without asking: changing MAP_W/MAP_H mapping, REF edges, or cell center math.
+
+# Canonical visuals = former “Grid Demo C” + Pit Demo 5 walls
+
+Always use this kit for every raid:
+
+- **Platform**: ramp deep — drops to canvas bottom, sides clipped to floor rails, plus underside deck (front apron).
+- **Obstacles**: black pit tiles (impassable `wall`). If a pit’s **far/upper** edge adjoins a floor cell, draw fade-out drop style **4**. If the far edge does **not** adjoin floor, the cell is pure black (no grid).
+- **Entrance**: green floor tile.
+- **Exit**: distinct exit floor tile at the far end.
+- Do **not** change the front platform apron unless the user explicitly asks.

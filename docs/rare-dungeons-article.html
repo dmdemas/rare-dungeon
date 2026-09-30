@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rare Dungeons — Economic Potential</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0f0f0f;
+    color: #e8e8e8;
+    padding: 48px 32px;
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  h2 { font-size: 20px; font-weight: 700; color: #fff; margin: 36px 0 12px; border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; }
+  h3 { font-size: 15px; font-weight: 600; color: #ccc; margin: 20px 0 8px; }
+  p  { font-size: 14px; color: #b0b0b0; margin: 8px 0; }
+  strong { color: #e0e0e0; }
+  code { font-family: monospace; font-size: 12px; background: #1e1e1e; padding: 1px 5px; border-radius: 3px; color: #a8d8a8; }
+
+  .subtitle { color: #666; font-size: 13px; margin-bottom: 28px; }
+
+  .callout {
+    background: #0e1a2a;
+    border-left: 3px solid #4a9eff;
+    padding: 14px 18px;
+    border-radius: 4px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: #b0c8e8;
+  }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+
+  .card {
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .card-title { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+
+  .stat { text-align: center; }
+  .stat .val { font-size: 22px; font-weight: 700; color: #fff; }
+  .stat .val.green { color: #4ade80; }
+  .stat .val.red   { color: #f87171; }
+  .stat .lbl { font-size: 11px; color: #666; margin-top: 2px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  thead th {
+    text-align: left;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 1px solid #2a2a2a;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  tbody td {
+    padding: 7px 10px;
+    color: #c0c0c0;
+    border-bottom: 1px solid #1e1e1e;
+  }
+  tbody td:first-child { color: #e0e0e0; font-weight: 500; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #1a1a1a; }
+
+  .chart-wrap { margin: 16px 0; }
+  .caption { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+
+  .divider { border: none; border-top: 1px solid #2a2a2a; margin: 32px 0; }
+
+  .loop-card {
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+  .loop-line { font-size: 14px; color: #b0b0b0; padding: 4px 0; }
+  .loop-final { font-size: 13px; color: #666; font-style: italic; margin-top: 12px; padding-top: 12px; border-top: 1px solid #2a2a2a; }
+
+  @media print {
+    body { background: #fff; color: #111; padding: 20px; }
+    h1, h2, h3 { color: #000; }
+    .card { border-color: #ccc; background: #f9f9f9; }
+    .callout { background: #f0f6ff; border-color: #2563eb; color: #1e3a5f; }
+    p { color: #333; }
+    tbody td { color: #444; }
+    tbody td:first-child { color: #111; }
+    thead th { color: #666; }
+    .stat .val { color: #000; }
+    .loop-line { color: #333; }
+    canvas { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Rare Dungeons — Economic Potential</h1>
+<div class="subtitle">Vibeathon · Category: Economic Potential · Token: $RF (Rare Friends) · On-chain settlement: coming</div>
+
+<!-- Key stats -->
+<div class="grid4">
+  <div class="card stat"><div class="val">10.8%</div><div class="lbl">Hard clear rate</div></div>
+  <div class="card stat"><div class="val">8.4</div><div class="lbl">Mean wins before clear</div></div>
+  <div class="card stat"><div class="val green">8.55×</div><div class="lbl">Raider × at win 8</div></div>
+  <div class="card stat"><div class="val green">30×</div><div class="lbl">Owner × at win 25</div></div>
+</div>
+
+<div class="callout">
+  <strong>BALANCE</strong> → creates a real sense of chance &nbsp;·&nbsp;
+  <strong>PSYCHOLOGY</strong> → keeps players in and coming back &nbsp;·&nbsp;
+  <strong>ECONOMY</strong> → makes holding and spending rational.
+  Everything reinforces everything else. This is the FOMO engine.
+</div>
+
+<!-- GAME DESCRIPTION -->
+<h2>What Is Rare Dungeons</h2>
+<p>A Friend — your character — enters a dungeon and must survive 3 floors. Each floor has enemies, fog, pit traps, and other hazards — all shaped by the perks the dungeon owner chose at creation. Before entering, the raider picks perks for the Friend. The dungeon owner picks perks for the dungeon itself. Both sides have <strong>6 perks × 3 ranks</strong>. The same run, two opposite loadouts.</p>
+<p><strong>Raider</strong> pays entry and bets the Friend survives all 3 floors. Win → collect the bank. Lose → entry stays in the dungeon, dungeon level rises. <strong>Dungeon Owner</strong> paid to create. They bet raiders keep dying. Each failed raid grows the bank. Each win earns tickets toward the weekly pool jackpot.</p>
+
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">SOFT MODE — $1 entry / $2 create</div>
+    <table>
+      <tbody>
+        <tr><td>Clear rate</td><td>~33%</td></tr>
+        <tr><td>Raider × on clear</td><td style="color:#4ade80">~3×</td></tr>
+        <tr><td>Owner close (suggested)</td><td>~1.5×</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:#555;margin-top:6px">Designed to teach: the game is winnable.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">HARD MODE — $15 entry / $30 create</div>
+    <table>
+      <tbody>
+        <tr><td>Clear rate</td><td>~11%</td></tr>
+        <tr><td>Raider × (held dungeon)</td><td style="color:#4ade80">8.7–9.4×</td></tr>
+        <tr><td>Owner × at close</td><td style="color:#4ade80">~4×</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:#555;margin-top:6px">Where real stakes live.</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- BALANCE -->
+<h2>BALANCE — Calibrated to Economic Targets</h2>
+<p>Clear rates were set first as economic targets. Then the game was tuned to hit them through simulation sweeps. Soft: <code>dungeonEfficacy = 6.5</code>, stamina flat 20 → <strong>33% clear</strong>. Hard: stamina <strong>20 → 17 → 13</strong> per floor, <code>dungeonPowerScale = 2.3</code> → <strong>10.8% clear</strong>.</p>
+
+<h3>Golden Standard — 10 000+ simulation runs</h3>
+<table>
+  <thead><tr><th>Metric</th><th>Target</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Soft clear rate</td><td>30–36%</td><td style="color:#4ade80">33% ✓</td></tr>
+    <tr><td>Hard clear rate</td><td>10–15%</td><td style="color:#4ade80">10.8% ✓</td></tr>
+    <tr><td>Hard raider × (held dungeon)</td><td>8–10×</td><td style="color:#4ade80">8.7–9.4× ✓</td></tr>
+    <tr><td>Mean wins before clear</td><td>7–10</td><td style="color:#4ade80">8.4 ✓</td></tr>
+  </tbody>
+</table>
+
+<h3>Death Curve — out of 100 Hard raiders</h3>
+<p>Floor 3 stamina is intentionally 13. Most players die with 1–2 stamina left. The near-miss is calibrated, not accidental — it is the main retention mechanism.</p>
+<div class="chart-wrap"><canvas id="chartDeath" height="140"></canvas></div>
+<div class="caption">Hard mode · clear rate 10.8% · STA per floor: 20 / 17 / 13</div>
+
+<h3>Dispersion Control</h3>
+<p>Without calibration, random maps collapse the real Hard win rate in a live pool to <strong>1.2%</strong> — P(6 losses in a row) = 93%. Solution: 10 000 map candidates filtered to 8–12% win range. σ dropped 8.1% → <strong>2.3%</strong>.</p>
+<div class="grid4">
+  <div class="card stat"><div class="val red">8.1%</div><div class="lbl">σ maps (before)</div></div>
+  <div class="card stat"><div class="val green">2.3%</div><div class="lbl">σ maps (after)</div></div>
+  <div class="card stat"><div class="val red">93.1%</div><div class="lbl">P(6 losses) before</div></div>
+  <div class="card stat"><div class="val green">57.6%</div><div class="lbl">P(6 losses) after</div></div>
+</div>
+<div class="caption">57.6% is the math of a fair 10% game (0.9⁶ ≈ 53%) — not broken maps.</div>
+
+<hr class="divider">
+
+<!-- PSYCHOLOGY -->
+<h2>PSYCHOLOGY — Why Players Come Back</h2>
+<p><strong>Soft as a funnel.</strong> 33% wins feel real and frequent. Players experience winning before risking more. Then Hard calls.</p>
+<p><strong>Skill attribution — both sides.</strong> The raider has 6 perks × 3 ranks: Dash, Fearless, Endurance, Sharp Eye, Dodge, Rally. The dungeon owner has 6 perks × 3 ranks: Horde, Walls, Fog, Dreadful Beasts, Sharp Claws, Thick Hide. Hundreds of combinations. When you win, the build felt right. When you lose, the next build feels smarter.</p>
+<p><strong>Near-miss architecture.</strong> Dying on Floor 3 with 1 stamina left is the strongest retention moment in the game. Players don't quit — they reroll a perk and go again.</p>
+<p><strong>The × is always visible.</strong> Before every raid: TO WIN / YOUR × / TICKETS. The potential payout is never hidden. <strong>Live feed</strong> drops events every 10–15 seconds: "Friend earned 9.1× from raid." "Holder claimed +$147." The world feels active. You feel like you're missing out.</p>
+
+<hr class="divider">
+
+<!-- ECONOMY -->
+<h2>ECONOMY — The Pool Makes Everyone Spend More</h2>
+
+<h3>Where every dollar goes (Hard)</h3>
+<table>
+  <thead><tr><th>Source</th><th>→ Bank</th><th>→ Pool</th></tr></thead>
+  <tbody>
+    <tr><td>Create $30</td><td>$27</td><td>$3</td></tr>
+    <tr><td>Entry $15</td><td>$13.5</td><td>$1.5</td></tr>
+    <tr><td>Reroll (×1.5 ladder)</td><td>—</td><td>100%</td></tr>
+    <tr><td>Clear (Friend wins)</td><td>95% → raider</td><td>5%</td></tr>
+    <tr><td>Protocol burn</td><td>—</td><td>−0.5%/week</td></tr>
+  </tbody>
+</table>
+<div class="caption">Rerolls buy perk control, not guaranteed EV — but every reroll grows the pool everyone competes for.</div>
+
+<h3>Near-lock Tax — why owners hold</h3>
+<p>Instead of a hard lock, a sliding claim tax. Owners who exit early fund the jackpot for those who stay. Tax flows directly into the pool.</p>
+<table>
+  <thead><tr><th>Wins</th><th>Claim Tax</th><th>Owner Gets</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>95%</td><td>5% of bank</td></tr>
+    <tr><td>3</td><td>80%</td><td>20% of bank</td></tr>
+    <tr><td>5</td><td>50%</td><td>~1.5×</td></tr>
+    <tr><td>7</td><td>5%</td><td>~3.7× — unlock zone</td></tr>
+    <tr><td>8+</td><td>0%</td><td>100% + tickets start</td></tr>
+  </tbody>
+</table>
+
+<h3>Near-lock Tax vs Ticket Power — wins 1–25</h3>
+<p>Claim tax falls from 95% to 0% at win 8. Ticket power grows exponentially after win 7. The two forces together make early exit financially irrational and late hold exponentially rewarding.</p>
+<div class="chart-wrap"><canvas id="chartTaxTickets" height="220"></canvas></div>
+<div class="caption">Claim tax 95% → 0% · Cumulative tickets normalized to 100 at win 25 (350 tickets total)</div>
+
+<h3>Ticket System — risk rewarded exponentially</h3>
+<p>The longer a dungeon survives, the closer it gets to being cleared. Tickets compensate for that growing risk. Both raiders and owners benefit from a dungeon that lives long — creating a shared jackpot atmosphere where everyone has a stake in the big dungeons staying alive.</p>
+<table>
+  <thead><tr><th>Win</th><th>Tickets minted</th><th>Cumulative</th><th>P(survive)</th></tr></thead>
+  <tbody>
+    <tr><td>7</td><td>1</td><td>1</td><td>44.9%</td></tr>
+    <tr><td>8</td><td>2</td><td>3</td><td>40.1%</td></tr>
+    <tr><td>10</td><td>3</td><td>8</td><td>31.9%</td></tr>
+    <tr><td>15</td><td>8</td><td>34</td><td>18.0%</td></tr>
+    <tr><td>20</td><td>24</td><td>117</td><td>10.1%</td></tr>
+    <tr><td>25</td><td>64</td><td>350</td><td>5.7%</td></tr>
+  </tbody>
+</table>
+<div class="caption">25% of the weekly pool distributes pro-rata to ticket holders at week-end · $/ticket ≈ $1.60 at 200 dungeons/week</div>
+
+<h3>Reward Multiplier & Dungeon Survival — wins 7–25</h3>
+<p>Owner exits voluntarily: bank (after tax) plus tickets held to week-end. Raider who clears gets 95% of bank plus 90% of dungeon ticket power. As survival probability falls, the jackpot for both sides rises.</p>
+<div class="grid2">
+  <div>
+    <div class="chart-wrap"><canvas id="chartMultiplier" height="240"></canvas></div>
+    <div class="caption">Owner: bank + ticket value · Raider: 95% bank + 90% ticket power on clear</div>
+  </div>
+  <div>
+    <div class="chart-wrap"><canvas id="chartSurvive" height="240"></canvas></div>
+    <div class="caption">Clear rate 10.8% per raid · P(win 25) = 5.7% · Mean clear: win 8.4</div>
+  </div>
+</div>
+
+<h3>Pool & $RF Token</h3>
+<p>Pool funds accumulate in $RF throughout the week. The longer players hold and chase the jackpot, the more $RF stays locked. 0.5% burns weekly. More activity = more locked = more burned = direct positive pressure on token price.</p>
+
+<hr class="divider">
+
+<!-- THE LOOP -->
+<h2>The Loop</h2>
+<div class="loop-card">
+  <div class="loop-line">Soft teaches you the game is winnable.</div>
+  <div class="loop-line">Hard makes winning rare enough to matter.</div>
+  <div class="loop-line">6 perks per side make you feel in control.</div>
+  <div class="loop-line">Floor 3 with 1 stamina left brings you back.</div>
+  <div class="loop-line">Rerolls grow the pool you're competing for.</div>
+  <div class="loop-line">The tax makes holding rational.</div>
+  <div class="loop-line">Tickets make holding exponentially better.</div>
+  <div class="loop-line">The bigger the jackpot — the more FOMO for everyone else.</div>
+  <div class="loop-line">More FOMO → more entries → bigger pool → bigger jackpot.</div>
+  <div class="loop-final">Balance, psychology, and economy are not three separate systems. They are one loop.</div>
+</div>
+<div class="caption" style="margin-top:12px">All figures from 10 000+ simulation runs on calibrated map pools. Every number verified across multiple independent runs before being locked.</div>
+
+<script>
+const W1_25 = Array.from({length:25},(_,i)=>String(i+1));
+const W7_25 = Array.from({length:19},(_,i)=>String(i+7));
+
+const KEEP_PCT   = [5,10,20,30,50,80,95,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100];
+const CUM_TICKS  = [0,0,0,0,0,0,1,3,5,8,11,15,20,26,34,44,57,73,93,117,147,184,230,286,350];
+const TICKS_NORM = CUM_TICKS.map(v=>parseFloat(((v/350)*100).toFixed(1)));
+const SURVIVE  = [44.9,40.1,35.7,31.9,28.4,25.4,22.6,20.2,18.0,16.0,14.3,12.8,11.4,10.1,9.0,8.1,7.2,6.4,5.7];
+const OWNER_X  = [3.71,4.44,4.97,5.56,6.26,6.96,7.66,8.36,9.08,10.39,11.70,13.01,14.32,15.65,18.56,21.47,24.38,27.29,30.21];
+const RAIDER_X = [7.70,8.55,9.41,10.26,11.12,11.97,12.83,13.68,14.54,15.39,16.25,17.10,17.96,18.81,19.67,20.52,21.38,22.24,23.09];
+
+const gridColor = 'rgba(255,255,255,0.06)';
+const tickColor = '#555';
+
+const base = {
+  plugins:{ legend:{ labels:{ color:'#aaa', font:{size:11} } } },
+  scales:{
+    x:{ grid:{color:gridColor}, ticks:{color:tickColor, font:{size:10}} },
+    y:{ grid:{color:gridColor}, ticks:{color:tickColor, font:{size:10}} }
+  }
+};
+
+// Chart 1 – Death curve
+new Chart(document.getElementById('chartDeath'), {
+  type:'bar',
+  data:{
+    labels:['Entry','After Floor 1\n(STA 20)','After Floor 2\n(STA 17)','CLEAR — Floor 3\n(STA 13)'],
+    datasets:[{
+      label:'Survivors out of 100',
+      data:[100,70,40,10],
+      backgroundColor:['#3b82f6','#f59e0b','#ef4444','#22c55e'],
+      borderRadius:4,
+    }]
+  },
+  options:{
+    indexAxis:'y',
+    plugins:{ legend:{display:false} },
+    scales:{
+      x:{ max:110, grid:{color:gridColor}, ticks:{color:tickColor, font:{size:11}}, title:{display:true,text:'Raiders surviving',color:'#555',font:{size:11}} },
+      y:{ grid:{color:'transparent'}, ticks:{color:'#ccc', font:{size:12}} }
+    }
+  }
+});
+
+// Chart 2 – Tax vs Tickets
+new Chart(document.getElementById('chartTaxTickets'), {
+  type:'line',
+  data:{
+    labels:W1_25,
+    datasets:[
+      {
+        label:'Bank kept % (after claim tax)',
+        data:KEEP_PCT,
+        borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.08)',
+        borderWidth:2, pointRadius:2, tension:0.3, fill:true,
+      },
+      {
+        label:'Ticket power % (of win-25 max)',
+        data:TICKS_NORM,
+        borderColor:'#4a9eff', backgroundColor:'rgba(74,158,255,0.08)',
+        borderWidth:2, pointRadius:2, tension:0.3, fill:true,
+      }
+    ]
+  },
+  options:{
+    ...base,
+    scales:{
+      x:{ ...base.scales.x, title:{display:true,text:'Win number',color:'#555',font:{size:11}} },
+      y:{ ...base.scales.y, max:105, title:{display:true,text:'%',color:'#555',font:{size:11}} }
+    }
+  }
+});
+
+// Chart 3 – Multiplier
+new Chart(document.getElementById('chartMultiplier'), {
+  type:'line',
+  data:{
+    labels:W7_25,
+    datasets:[
+      {
+        label:'Owner ×',
+        data:OWNER_X,
+        borderColor:'#4a9eff', backgroundColor:'rgba(74,158,255,0.08)',
+        borderWidth:2, pointRadius:2, tension:0.4, fill:true,
+      },
+      {
+        label:'Raider × on clear',
+        data:RAIDER_X,
+        borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.08)',
+        borderWidth:2, pointRadius:2, tension:0.4, fill:true,
+      }
+    ]
+  },
+  options:{
+    ...base,
+    scales:{
+      x:{ ...base.scales.x, title:{display:true,text:'Win number',color:'#555',font:{size:11}} },
+      y:{ ...base.scales.y, title:{display:true,text:'Multiplier ×',color:'#555',font:{size:11}} }
+    }
+  }
+});
+
+// Chart 4 – Survival
+new Chart(document.getElementById('chartSurvive'), {
+  type:'line',
+  data:{
+    labels:W7_25,
+    datasets:[{
+      label:'P(survive to win) %',
+      data:SURVIVE,
+      borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,0.1)',
+      borderWidth:2, pointRadius:2, tension:0.4, fill:true,
+    }]
+  },
+  options:{
+    ...base,
+    scales:{
+      x:{ ...base.scales.x, title:{display:true,text:'Win number',color:'#555',font:{size:11}} },
+      y:{ ...base.scales.y, max:50, title:{display:true,text:'Survival %',color:'#555',font:{size:11}} }
+    }
+  }
+});
+</script>
+</body>
+</html>

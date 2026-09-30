@@ -1,0 +1,17 @@
+Floor curve ×1000 (Soft STA↓to20 · Hard STA-by-floor)
+HARD abs=0.92 STA [20, 17, 13]
+SOFT STA [20, 20, 20] abs=0.4 eff×6.5 fright−10
+Target Soft: F1 almost all pass → clear ~33%
+Target Hard cum: die1~30% · byF2~60% · byF3~90% · clear~10%
+
+══ HARD ══
+  die F1 251  25.1%  (cum)
+  die F2 329  32.9%  cum by F2 58.0%  | cond|reach2 43.9%
+  die F3 321  32.1%  cum by F3 90.1%  | cond|reach3 76.4%
+  CLEAR  99  9.9%
+
+══ SOFT ══
+  die F1 375  37.5%  (cum)
+  die F2 181  18.1%  cum by F2 55.6%  | cond|reach2 29.0%
+  die F3 103  10.3%  cum by F3 65.9%  | cond|reach3 23.2%
+  CLEAR  341  34.1%

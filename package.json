@@ -1,0 +1,35 @@
+{
+  "name": "rare-dungeon",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test:perk": "tsx scripts/test-perk.ts",
+    "verify:perks": "tsx scripts/verify-perks.ts",
+    "sim:economy": "tsx scripts/sim-economy-tiers.ts",
+    "sim:perks": "tsx scripts/sim-perk-balance.ts",
+    "sim:soft": "tsx scripts/sim-soft-verify.ts",
+    "sim:hard": "tsx scripts/sim-hard.ts",
+    "sim:parity": "tsx scripts/sim-parity-skew.ts",
+    "gen:world": "tsx scripts/gen-world-snapshots.ts",
+    "sim:parity:behavior": "tsx scripts/sim-parity-behavior.ts",
+    "sim:funnel": "tsx scripts/sim-economy-funnel-10k.ts",
+    "sim:hard-floors": "tsx scripts/sim-hard-floors-1k.ts",
+    "sim:integration-check": "tsx scripts/sim-integration-check.ts"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tsx": "^4.23.15",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.0"
+  }
+}

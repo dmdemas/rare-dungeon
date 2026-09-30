@@ -1,0 +1,32 @@
+SOFT perk+floor ×1000
+STA Soft [20, 20, 20] · abs=0.4 · efficacy×6.5 · fright−10
+Target: F1 pass almost all → fewer F2 → clear ~33% (Soft-only)
+
+══ Floor deaths ══
+  die F1 380  38.0%
+  die F2 168  16.8%  cum 54.8%  | cond 27.1%
+  die F3 119  11.9%  cum 66.7%  | cond 26.3%
+  CLEAR  333  33.3%
+  shape F1<F2<F3 abs? no  cond F2<F3? no
+
+══ Friend perks (pick → clear rate when owned) ══
+  dash         n=506  clear|own 57.3%
+  rally        n=109  clear|own 55.0%
+  endurance    n=235  clear|own 43.4%
+  fearless     n=476  clear|own 40.5%
+  sharpEye     n=377  clear|own 31.6%
+  dodge        n=0  clear|own 0.0%
+
+══ Dungeon perks in loadout (→ outcome mix) ══
+  horde            n=1023  die1 32.1% die2 14.0% die3 13.1% clear 40.9%
+  dreadfulBeasts   n=763  die1 42.2% die2 16.5% die3 12.2% clear 29.1%
+  fog              n=592  die1 36.7% die2 15.0% die3 8.3% clear 40.0%
+  walls            n=407  die1 41.3% die2 23.6% die3 13.5% clear 21.6%
+  thickHide        n=215  die1 48.8% die2 23.3% die3 12.1% clear 15.8%
+
+══ Dungeon perk revealed on this floor when Friend died / cleared that floor ══
+  horde            deathOnReveal 130  clearOnReveal 579  killRate 18.3%
+  dreadfulBeasts   deathOnReveal 220  clearOnReveal 307  killRate 41.7%
+  fog              deathOnReveal 107  clearOnReveal 312  killRate 25.5%
+  walls            deathOnReveal 130  clearOnReveal 147  killRate 46.9%
+  thickHide        deathOnReveal 80  clearOnReveal 60  killRate 57.1%

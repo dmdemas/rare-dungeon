@@ -1,0 +1,80 @@
+---
+description: Soft/Hard dungeon economy targets, rerolls→pool, weekly tickets
+alwaysApply: true
+---
+
+# Soft / Hard economy (approved targets)
+
+Units: simulated `$`. Sacred: 95/5 clear split, corpse→bank, fees→pool, **weekly pool tickets**. No mid-run pay-to-win. No 5‑min farming layer — tickets only.
+
+## Combat scale (player-facing Soft-units)
+
+- **Soft = 1×** dungeon units (school baseline). Absolute combat = `1 × 0.4 = 0.4`.
+- **Hard = 2.3×** Soft-units (`0.92 / 0.4`). Absolute combat = `2.3 × 0.4 = 0.92` — **same balance as before**.
+- Soft Friend free ease: Soft-only Dash/Endurance/Rally tables + `dungeonEfficacy`; Soft STA **25 / 22 / 20** (≥20). Hard untouched (STA **20 / 17 / 13**, catalog Dash 2/3/4).
+- Soft WR must stay **>** Hard WR (even Hard at reroll perk cap).
+- Soft clear ~**33%**. Pass rate falls F1 → F2 → F3.
+- Do **not** retune by editing Soft-units without converting through `DUNGEON_SCALE_UNIT_ABS`.
+
+## Soft
+
+- Create **$2** / entry **$1**. No offer rerolls.
+- Friend clear ~**33%**. Owner suggested close ~**1.5×**.
+
+## Hard
+
+- Create **$30** (bank $27 + fee $3 = **90/10**) / entry **$15** (bank $13.5 + pool $1.5 = **90/10**).
+- Friend clear ~**11%** (floor curve: die F1 ~30% / cum ~60% by F2 / cum ~90% by F3). `minWinsBeforeClaim` **7**. Suggested bank close ~**2.0×** (then hold for tickets).
+- **Golden OR (with tickets):**
+  - Friend wipe on a **held** bank → pot **~8–10×** entry.
+  - Owner total (bank claim **+** weekly ticket $) → **~2–3×** create.
+- Early-claim @ k=7 without tickets → thin pots ~4× and weak ticket power — holding matters.
+- Bankroll guard: ~9 attempts to clear → entry **$15** → spend-to-win often ≲ **$150** (rerolls extra).
+
+## Rerolls (Hard only — Friend + dungeon create, same ladder)
+
+- First **$2.5**, each next **×1.5** → $2.5 / $3.75 / $5.63 / $8.44… → **100% rewardPool**.
+- Buy perk control, **not** +EV.
+
+## Reward pool (dynamic all week)
+
+- **All fees → rewardPool** (`PROTOCOL_BURN_ENABLED = false` for now).
+  - Soft: create fee + entry→pool + clear 5%
+  - Hard: create fee + entry→pool + Friend/create rerolls + clear 5%
+- Pool **$ grows continuously**; **split only at week end**.
+
+## Weekly pool tickets (one item, power = quantity)
+
+- One ticket type in inventory — **no levels**; only **`power` (count)** changes.
+- Soft tickets / Hard tickets are separate ledgers; week-end pot split **20% Soft / 80% Hard**, then pro-rata by power inside each ledger.
+- **Mint on Hard corpse** (dungeon wins raid):
+  ```
+  Δpower = 1 × holdBonus(wins) × riskBoost × postUnlockMint × accountMult
+  holdBonus = 1 + 0.12 × max(0, wins−1)
+  riskBoost = 3 if wins≥8 OR raider×≥7, else 1
+  postUnlockMint = 2 if wins≥8, else 1
+  accountMult = min(1.35, 1 + 0.08 × (liveHard−1))
+  ```
+- **Early claim slash:** claim with wins &lt; 8 → keep only **20%** of that dungeon’s ticket power (rest burned). Forces hold into jackpot band.
+- **Claim** (after unlock): take bank now; remaining ticket power **stays** until week end.
+- **Wipe (Friend clear):** dungeon power **W2** — **90% → Friend**, **10% burned**.
+- **Week end:** `payout = pot × power / Σpower`; wallets credited; **tickets → 0**.
+- Holder AI / design exit: raider× ≥ **9.2** or wins ≥ **12** (after minting into 8–10× band).
+
+## Hard matchmaking (pool of live Hard)
+
+- Create → Hard `available` pool.
+- Play: UI may show 5 previews; **only the winner is locked** into `in_raid`.
+- After raid: wipe → gone; death → back to `available` (no separate 5‑min farm state).
+
+## Create↔raid parity — **WIP, unproven**
+
+Do **not** ship dynamic pricing as locked design. Stress: `npm run sim:parity` / `sim:parity:behavior`.
+
+Hypotheses under test:
+
+- Strict 1:1 parity may be **unnecessary** — slight **dungeon surplus** can be healthy.
+- **Create-glut** (many Hard, few raids): wipe pots thin (~4×); create tax alone does **not** fix jackpot OR.
+- **Raid-glut** lever (preferred): cut **entry cost** by demand pressure so wipe **× vs paid stake** rises.
+  - pressure = raidDemand/liveHard → mul 1 / 0.75 / 0.6 / 0.5; bank+pool keep 90/10 of paid entry.
+- Humans in sims: owners claimer/holder/whale; raiders bare/perk1/perkHunt/yolo.

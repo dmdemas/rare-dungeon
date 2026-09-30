@@ -1,0 +1,235 @@
+HARD targets pipeline
+Friend: ~10% base clear; rerolls → up to ~25%; pot ~8–10× entry
+Dungeon: survive ~9/10; owner ~2–2.5× create (+shares)
+Rerolls: Friend offers + dungeon create offers (Hard). Costs → rewardPool.
+Parity entry-discount = WIP (create-raid-parity rule) — not applied here.
+
+── Combat ease sweep (base: smart Friend, 0 Friend rerolls, dungeon smart 0 create-reroll) ──
+  scale=1 sta+0 fr-0 → clear 11.1%
+  scale=0.95 sta+0 fr-0 → clear 11.3%
+  scale=0.92 sta+0 fr-0 → clear 12.8%
+  scale=0.9 sta+0 fr-0 → clear 12.7%
+  scale=0.88 sta+0 fr-0 → clear 11.8%
+  scale=0.88 sta+1 fr-0 → clear 19.8%
+  scale=0.85 sta+1 fr-0 → clear 17.2%
+  scale=0.85 sta+1 fr-5 → clear 20.6%
+  scale=0.9 sta+1 fr-0 → clear 18.4%
+  scale=0.92 sta+1 fr-0 → clear 19.8%
+
+Chosen ease after 1k sweep: {"scale":1,"sta":0,"fright":0} clear=11.1%
+
+######## PASS1 1k (combat n=1000, world n=1000) ########
+ease {"scale":1,"sta":0,"fright":0}
+
+══ Friend clear (base, 0 Friend rerolls) ══
+  clear 11.3%   target ~10%
+
+══ Friend reroll budget → clear (hunt top Friend perks) ══
+  Friend rerolls=0 ($0.00) → clear 10.2%
+  Friend rerolls=1 ($2.50) → clear 12.2%
+  Friend rerolls=2 ($6.25) → clear 15.6%
+  Friend rerolls=3 ($11.88) → clear 16.7%
+  Friend rerolls=4 ($20.31) → clear 17.5%
+  Friend rerolls=6 ($51.95) → clear 22.9%
+
+══ Dungeon create-reroll budget → Friend clear (stronger dungeon) ══
+  create rerolls=0 ($0.00) → Friend clear 9.9%
+  create rerolls=1 ($2.50) → Friend clear 13.6%
+  create rerolls=2 ($6.25) → Friend clear 12.0%
+  create rerolls=3 ($11.88) → Friend clear 13.3%
+  create rerolls=5 ($32.97) → Friend clear 14.7%
+
+  Friend rerolls=6 + dungeon createRerolls=1 → clear 26.2%   target Friend cap ~25%
+
+══ Soft hierarchy (reference from SOFT consts via hard runner scale) ══
+  (Soft full verify separate; here Soft-ish clear with SOFT ease on Hard pipeline skipped)
+
+══ Causal Friend perk lift (force line III-ish, n=300) ══
+  dash         clear 26.3%  lift +18.3%
+  rally        clear 1.3%  lift -6.7%
+  endurance    clear 1.0%  lift -7.0%
+  fearless     clear 0.0%  lift -8.0%
+  sharpEye     clear 0.0%  lift -8.0%
+  dodge        clear 0.0%  lift -8.0%
+
+══ Causal Dungeon perk (force line — lower Friend clear = stronger dungeon, n=300) ══
+  sharpClaws     Friend clear 1.0%  Δ -8.7%
+  thickHide      Friend clear 3.0%  Δ -6.7%
+  dreadfulBeasts Friend clear 5.3%  Δ -4.3%
+  walls          Friend clear 9.0%  Δ -0.7%
+  fog            Friend clear 14.0%  Δ +4.3%
+  horde          Friend clear 24.0%  Δ +14.3%
+
+══ Owner world @ clearP=11.3% ══
+
+  [early-claim meta (most claim @≥7 / 2×)]
+    dungeon survive / raid   88.5%   (target ~90%)
+    Friend takes dungeon     64.9%
+    mean Friend pot ×        5.80×   (target 8–10)  in 8–10.5: 3.4%
+    mean Owner ROI           1.58×   (target ~2–2.5)  mean kills 5.0
+
+  [balanced humans]
+    dungeon survive / raid   88.3%   (target ~90%)
+    Friend takes dungeon     68.8%
+    mean Friend pot ×        6.25×   (target 8–10)  in 8–10.5: 4.4%
+    mean Owner ROI           1.46×   (target ~2–2.5)  mean kills 5.2
+
+  [hold-heavy (fat pots)]
+    dungeon survive / raid   88.8%   (target ~90%)
+    Friend takes dungeon     77.1%
+    mean Friend pot ×        7.46×   (target 8–10)  in 8–10.5: 10.6%
+    mean Owner ROI           1.25×   (target ~2–2.5)  mean kills 6.1
+
+── Anchor sweep: base≈10% & Dash-hunt(reroll6)≈25% ──
+  {"scale":1,"sta":0,"fright":0} base 10.4% dashHunt 21.6% score 0.041
+  {"scale":0.92,"sta":1,"fright":0} base 13.8% dashHunt 30.4% score 0.129
+  {"scale":0.9,"sta":1,"fright":0} base 21.3% dashHunt 31.9% score 0.294
+  {"scale":0.88,"sta":1,"fright":0} base 21.4% dashHunt 32.8% score 0.305
+  {"scale":0.9,"sta":0,"fright":0} base 10.5% dashHunt 22.1% score 0.039
+  {"scale":0.95,"sta":1,"fright":0} base 17.8% dashHunt 34.4% score 0.249
+  {"scale":0.88,"sta":0,"fright":0} base 13.1% dashHunt 22.1% score 0.091
+  {"scale":0.85,"sta":1,"fright":0} base 21.3% dashHunt 34.3% score 0.318
+  {"scale":1,"sta":1,"fright":0} base 18.3% dashHunt 29.5% score 0.210
+TUNING pick: {"scale":0.9,"sta":0,"fright":0}
+
+######## PASS2 1k after tune (combat n=1000, world n=1000) ########
+ease {"scale":0.9,"sta":0,"fright":0}
+
+══ Friend clear (base, 0 Friend rerolls) ══
+  clear 10.6%   target ~10%
+
+══ Friend reroll budget → clear (hunt top Friend perks) ══
+  Friend rerolls=0 ($0.00) → clear 11.7%
+  Friend rerolls=1 ($2.50) → clear 13.7%
+  Friend rerolls=2 ($6.25) → clear 17.9%
+  Friend rerolls=3 ($11.88) → clear 18.7%
+  Friend rerolls=4 ($20.31) → clear 18.8%
+  Friend rerolls=6 ($51.95) → clear 24.0%
+
+══ Dungeon create-reroll budget → Friend clear (stronger dungeon) ══
+  create rerolls=0 ($0.00) → Friend clear 8.2%
+  create rerolls=1 ($2.50) → Friend clear 13.1%
+  create rerolls=2 ($6.25) → Friend clear 12.6%
+  create rerolls=3 ($11.88) → Friend clear 12.8%
+  create rerolls=5 ($32.97) → Friend clear 14.5%
+
+  Friend rerolls=6 + dungeon createRerolls=1 → clear 25.6%   target Friend cap ~25%
+
+══ Soft hierarchy (reference from SOFT consts via hard runner scale) ══
+  (Soft full verify separate; here Soft-ish clear with SOFT ease on Hard pipeline skipped)
+
+══ Causal Friend perk lift (force line III-ish, n=300) ══
+  dash         clear 19.3%  lift +8.7%
+  rally        clear 1.7%  lift -9.0%
+  endurance    clear 1.0%  lift -9.7%
+  fearless     clear 0.0%  lift -10.7%
+  sharpEye     clear 0.0%  lift -10.7%
+  dodge        clear 0.0%  lift -10.7%
+
+══ Causal Dungeon perk (force line — lower Friend clear = stronger dungeon, n=300) ══
+  sharpClaws     Friend clear 0.3%  Δ -12.0%
+  thickHide      Friend clear 1.3%  Δ -11.0%
+  dreadfulBeasts Friend clear 5.0%  Δ -7.3%
+  walls          Friend clear 7.3%  Δ -5.0%
+  fog            Friend clear 9.0%  Δ -3.3%
+  horde          Friend clear 25.7%  Δ +13.3%
+
+══ Owner world @ clearP=10.6% ══
+
+  [early-claim meta (most claim @≥7 / 2×)]
+    dungeon survive / raid   89.7%   (target ~90%)
+    Friend takes dungeon     56.9%
+    mean Friend pot ×        5.39×   (target 8–10)  in 8–10.5: 1.6%
+    mean Owner ROI           1.83×   (target ~2–2.5)  mean kills 4.9
+
+  [balanced humans]
+    dungeon survive / raid   89.1%   (target ~90%)
+    Friend takes dungeon     67.4%
+    mean Friend pot ×        6.61×   (target 8–10)  in 8–10.5: 4.9%
+    mean Owner ROI           1.51×   (target ~2–2.5)  mean kills 5.5
+
+  [hold-heavy (fat pots)]
+    dungeon survive / raid   89.2%   (target ~90%)
+    Friend takes dungeon     76.7%
+    mean Friend pot ×        7.49×   (target 8–10)  in 8–10.5: 7.2%
+    mean Owner ROI           1.35×   (target ~2–2.5)  mean kills 6.3
+
+######## PASS3 10k FINAL (combat n=10000, world n=10000) ########
+ease {"scale":0.9,"sta":0,"fright":0}
+
+══ Friend clear (base, 0 Friend rerolls) ══
+  clear 10.8%   target ~10%
+
+══ Friend reroll budget → clear (hunt top Friend perks) ══
+  Friend rerolls=0 ($0.00) → clear 10.7%
+  Friend rerolls=1 ($2.50) → clear 13.5%
+  Friend rerolls=2 ($6.25) → clear 16.3%
+  Friend rerolls=3 ($11.88) → clear 18.0%
+  Friend rerolls=4 ($20.31) → clear 20.7%
+  Friend rerolls=6 ($51.95) → clear 22.4%
+
+══ Dungeon create-reroll budget → Friend clear (stronger dungeon) ══
+  create rerolls=0 ($0.00) → Friend clear 10.8%
+  create rerolls=1 ($2.50) → Friend clear 12.5%
+  create rerolls=2 ($6.25) → Friend clear 12.9%
+  create rerolls=3 ($11.88) → Friend clear 13.5%
+  create rerolls=5 ($32.97) → Friend clear 14.2%
+
+  Friend rerolls=6 + dungeon createRerolls=1 → clear 25.9%   target Friend cap ~25%
+
+══ Soft hierarchy (reference from SOFT consts via hard runner scale) ══
+  (Soft full verify separate; here Soft-ish clear with SOFT ease on Hard pipeline skipped)
+
+══ Causal Friend perk lift (force line III-ish, n=300) ══
+  dash         clear 21.0%  lift +10.0%
+  endurance    clear 2.0%  lift -9.0%
+  rally        clear 2.0%  lift -9.0%
+  fearless     clear 0.0%  lift -11.0%
+  sharpEye     clear 0.0%  lift -11.0%
+  dodge        clear 0.0%  lift -11.0%
+
+══ Causal Dungeon perk (force line — lower Friend clear = stronger dungeon, n=300) ══
+  sharpClaws     Friend clear 1.0%  Δ -9.0%
+  thickHide      Friend clear 1.0%  Δ -9.0%
+  dreadfulBeasts Friend clear 4.3%  Δ -5.7%
+  walls          Friend clear 7.0%  Δ -3.0%
+  fog            Friend clear 12.3%  Δ +2.3%
+  horde          Friend clear 23.7%  Δ +13.7%
+
+══ Owner world @ clearP=10.8% ══
+
+  [early-claim meta (most claim @≥7 / 2×)]
+    dungeon survive / raid   89.0%   (target ~90%)
+    Friend takes dungeon     60.0%
+    mean Friend pot ×        5.48×   (target 8–10)  in 8–10.5: 2.1%
+    mean Owner ROI           1.72×   (target ~2–2.5)  mean kills 4.9
+
+  [balanced humans]
+    dungeon survive / raid   89.2%   (target ~90%)
+    Friend takes dungeon     66.8%
+    mean Friend pot ×        6.53×   (target 8–10)  in 8–10.5: 4.8%
+    mean Owner ROI           1.56×   (target ~2–2.5)  mean kills 5.5
+
+  [hold-heavy (fat pots)]
+    dungeon survive / raid   89.3%   (target ~90%)
+    Friend takes dungeon     76.6%
+    mean Friend pot ×        7.64×   (target 8–10)  in 8–10.5: 8.9%
+    mean Owner ROI           1.33×   (target ~2–2.5)  mean kills 6.4
+
+######## FINAL VERDICT ########
+ease locked for this run: {"scale":0.9,"sta":0,"fright":0}
+HARD.ts currently: units=2.3 abs=0.92 sta+0 fr-0
+Friend base clear:     10.8%   want ~10%
+Friend reroll=6 clear: 25.9%   want ~25%
+Friend reroll curve:   0→10.7%  1→13.5%  2→16.3%  3→18.0%  4→20.7%  6→22.4%
+
+── Problem check (10k worlds) ──
+balanced: survive 89.1% | Friend pot 6.51× | Owner ROI 1.55×
+hold-heavy: survive 89.3% | Friend pot 7.67× | Owner ROI 1.31×
+early-claim: survive 89.1% | Friend pot 5.50× | Owner ROI 1.74×
+
+PROBLEMS:
+  - OWNER_ROI balanced 1.55× (want ~2–2.5)
+  - OWNER_ROI hold-heavy starved 1.31×
+
+SUGGEST: update HARD combat abs in economy (Soft-units = abs/0.4) → abs=0.9 units=2.25 sta=0 fright=0

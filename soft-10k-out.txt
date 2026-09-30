@@ -1,0 +1,48 @@
+SOFT × 10000 dungeon lives — Friend vs Dungeon
+Create $2 → bank $1.5 | Entry $1 → bank +$0.9
+Dungeon closes at suggested 1.5× (free claim, this is the Soft design policy)
+Friend clear target 30–35% | Friend pot target ~2–3× entry | Dungeon claim target ~1.5× create
+Combat ease: scale=0.4 sta+2 fright-10
+
+══ Friend (raid attempts) ══
+  attempts              16535
+  clear rate            34.5%  (5699/16535)   target 30–35%
+  mean pot if clear     $2.62
+  mean × if clear       2.62× entry   target ~2–3×
+  pot × p50/p90         2.28× / 3.13×
+  Friend × distribution:
+  [0.00, 1.50)  0.0%  n=0
+  [1.50, 2.00)  0.0%  n=0
+  [2.00, 2.50)  60.8%  n=3465
+  [2.50, 3.00)  0.0%  n=0
+  [3.00, 3.50)  39.2%  n=2234
+  [3.50, 4.00)  0.0%  n=0
+  [4.00, +inf)  0.0%  n=0
+  clear happens at kills-before-this-raid:
+    k=0: 60.8%  n=3465
+    k=1: 39.2%  n=2234
+
+══ Dungeon (per Soft life, closes @1.5×) ══
+  lives                 10000
+  Friend takes bank     57.0%  (5699)
+  Dungeon claims        43.0%  (4301)
+  mean $ if claims      $3.14
+  mean ROI if claims    1.57× create   target ~1.5×
+  mean ROI all lives    0.67×  (wipes count as 0 bank claim)
+  claim kills mean      2.00
+  Dungeon ROI (when claims) distribution:
+  [0.00, 1.00)  0.0%  n=0
+  [1.00, 1.25)  0.0%  n=0
+  [1.25, 1.50)  0.0%  n=0
+  [1.50, 1.75)  100.0%  n=4301
+  [1.75, 2.00)  0.0%  n=0
+  [2.00, 2.50)  0.0%  n=0
+  [2.50, +inf)  0.0%  n=0
+
+══ Target check ══
+  Friend clear 30–35%:     OK  (34.5%)
+  Friend mean × 2–3:       OK  (2.62×)
+  Dungeon claim ~1.5×:     OK  (1.57× when claims)
+  NOTE: all-lives ROI 0.67× < 1.5 — wipes drag EV; 1.5× is the claim-size target, not EV incl. clears (shares not in this run).
+
+(Hard create↔raid parity levers are separate WIP — see create-raid-parity rule.)

@@ -1,0 +1,48 @@
+---
+description: Create↔raid parity — WIP levers, sim results, do not ship yet
+alwaysApply: true
+---
+
+# Create ↔ raid parity (WIP)
+
+**Not shipped.** Dynamic pricing is a hypothesis under test only.
+Stress: `npm run sim:parity` / `npm run sim:parity:behavior` (1k).
+When running economy/parity tests, **remind** that these levers exist.
+
+## Design lean
+
+- Strict 1:1 create:raid parity is **unnecessary**.
+- Slight **dungeon surplus** (more live Hard than raid demand) is healthier than forced balance.
+
+## What breaks
+
+| Skew | Result (1k) | Lever |
+|---|---|---|
+| Create-glut (many Hard, few raids) | Wipe ~**4×**; OR 8–10 dead | Create tax ×1.25 alone does **not** fix |
+| Raid-glut, full $10 entry | ~**6.9×** vs $10 | — |
+| Raid-glut entry ×**0.6** | ~**7.7× vs paid**; EV less bad | **Preferred** |
+| Extreme ×**0.5** | ~**8.8× vs paid** | Watch fairness (≥12× spike) |
+
+Raid-glut fix = **discount entry** (raise × vs paid stake), not raise entry / create tax.
+
+## Pressure → entry mul (sim only)
+
+```
+pressure = raidDemand / liveHard
+≤1.1 → mul 1.0
+≤2   → 0.75
+≤3   → 0.6
+else → 0.5
+```
+
+Paid entry keeps **90/10** bank/pool (same ratios as $9+$1 of $10).
+
+## Humans in behavior sims
+
+- Owners: claimer / holder / whale
+- Raiders: bare / perk1 / perkHunt / yolo
+
+## Do not
+
+- Ship dynamic entry prices as locked product design
+- “Fix” create-glut with create tax alone and call OR restored

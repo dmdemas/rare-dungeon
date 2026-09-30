@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { assetUrl } from '../../assetUrl'
 import {
   getPerkDef,
   perkIconUrl,
@@ -36,7 +37,7 @@ export function PerkSlotsBar(props: Props) {
           side="dungeon"
           slots={props.dungeonSlots}
           ranks={props.dungeonRanks}
-          emptySrc="/refs.perk/DungeonPerkSlot.png?v=eq1"
+          emptySrc={assetUrl('/refs.perk/DungeonPerkSlot.png') + '?v=eq1'}
         />
       </div>
     )
@@ -48,13 +49,13 @@ export function PerkSlotsBar(props: Props) {
         side="friend"
         slots={props.friendSlots}
         ranks={props.friendRanks}
-        emptySrc="/refs.perk/FriendPerkSlot.png?v=eq1"
+        emptySrc={assetUrl('/refs.perk/FriendPerkSlot.png') + '?v=eq1'}
       />
       <SlotRow
         side="dungeon"
         slots={props.dungeonSlots}
         ranks={props.dungeonRanks}
-        emptySrc="/refs.perk/DungeonPerkSlot.png?v=eq1"
+        emptySrc={assetUrl('/refs.perk/DungeonPerkSlot.png') + '?v=eq1'}
       />
     </div>
   )

@@ -377,7 +377,7 @@ function TierChooser(p: {
                           </div>
                           <div className="tier-card-win-row tier-card-win-row--tax">
                             <span className="tier-card-win-label">TAXES UNTIL</span>
-                            <strong className="tier-card-win-val">LVL 6</strong>
+                            <strong className="tier-card-win-val">LVL 7</strong>
                           </div>
                           <div className="tier-card-win-row">
                             <span className="tier-card-win-label">TICKETS</span>

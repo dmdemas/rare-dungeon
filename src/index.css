@@ -561,6 +561,35 @@ button.stub {
   border: none;
 }
 
+/* My Dungeons — dungeon view HUD (back button + info) overlaid at top of stage */
+.dungeon-view-hud {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.dungeon-view-back {
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 4px 10px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.dungeon-view-info {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Close plan over the bottom of the field, left of the dungeon perk slots (232px + margins). */
 /* Centered on the stage; flex centering keeps transforms free for the drop-in animation. */
 .create-plan-dock {

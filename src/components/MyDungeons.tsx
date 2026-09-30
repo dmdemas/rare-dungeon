@@ -285,18 +285,9 @@ export function MyDungeons({
   }, [viewing])
 
   if (viewing && previewRaid) {
+    const viewTier = viewing.tier ?? 'soft'
     return (
       <div className="screen create-screen create-confirm">
-        <header className="screen-header">
-          <button type="button" className="ghost" onClick={() => setViewing(null)}>
-            ← Back
-          </button>
-          <h1>{viewing.name}</h1>
-          <p className="muted">
-            Soft bank ${(viewing.bank ?? 0).toFixed(2)} · wins {viewing.wins ?? 0} · Esc back
-          </p>
-        </header>
-
         <div className="create-confirm-stage">
           <DungeonCanvas
             raid={previewRaid}
@@ -304,6 +295,15 @@ export function MyDungeons({
             pitCliffStyle={viewing.pitCliffStyle ?? 4}
             liteFogPreview={hasFog}
           />
+          {/* HUD overlay — no header in the grid so the stage fills the full viewport */}
+          <div className="dungeon-view-hud">
+            <button type="button" className="ghost dungeon-view-back" onClick={() => setViewing(null)}>
+              ← Back
+            </button>
+            <span className="dungeon-view-info">
+              {viewing.name} · {viewTier} · ${(viewing.bank ?? 0).toFixed(2)} · wins {viewing.wins ?? 0} · Esc
+            </span>
+          </div>
           <PerkSlotsBar
             variant="create"
             dungeonSlots={viewPerks.slots}

@@ -1875,9 +1875,9 @@ body {
 }
 
 .action-tile-icon {
-  width: 50%;
+  width: 40%;
   height: auto;
-  max-height: 50%;
+  max-width: 120px;
   image-rendering: pixelated;
   object-fit: contain;
 }

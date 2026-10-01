@@ -34,7 +34,7 @@ function cloneMap(bp: DungeonBlueprint) {
   }
 }
 
-export function startRaid(bp: DungeonBlueprint, floor = 1): RaidState {
+export function startRaid(bp: DungeonBlueprint, floor = 1, raidSeed?: number): RaidState {
   const entrance = getEntranceCell(bp.map.tiles)
   const tier = bp.tier ?? 'soft'
   const floorBaseStamina = tier === 'hard' ? hardFloorStamina(floor) : softFloorStamina(floor)
@@ -91,7 +91,7 @@ export function startRaid(bp: DungeonBlueprint, floor = 1): RaidState {
     lastRallyCell: null,
     flinchCount: 0,
     flinchCheckedIds: [],
-    raidSeed: (Math.random() * 0x100000000) >>> 0,
+    raidSeed: raidSeed ?? ((Math.random() * 0x100000000) >>> 0),
     perkMods,
     rallyUsedThisFloor: 0,
     dashStepsLeft: 0,

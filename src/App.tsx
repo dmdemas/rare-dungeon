@@ -271,9 +271,9 @@ export default function App() {
   const [simWatchPerkSeq, setSimWatchPerkSeq] = useState<string[] | undefined>(undefined)
 
   /** Open bot-mode visual simulation for an owned dungeon, optionally replaying a specific raid. */
-  const startSimWatch = (bp: DungeonBlueprint, friendPickSequence?: string[]) => {
+  const startSimWatch = (bp: DungeonBlueprint, friendPickSequence?: string[], raidSeed?: number) => {
     setActiveBlueprint(bp)
-    setSimWatchRaid(startRaid(bp))
+    setSimWatchRaid(startRaid(bp, 1, raidSeed))
     setSimWatchPending(null)
     setSimWatchPerkSeq(friendPickSequence)
     setScreen({ kind: 'simWatch', blueprint: bp, raidIndex: 1, results: [] })
@@ -791,7 +791,7 @@ export default function App() {
           hardEntryQuote={hardEntryQuote}
           liveSoft={liveSoft}
           liveHard={liveHard}
-          onWatchSim={(bp, seq) => startSimWatch(bp, seq)}
+          onWatchSim={(bp, seq, seed) => startSimWatch(bp, seq, seed)}
           suggestClose={(bp) => {
             const tier = bp.tier ?? 'soft'
             if (tier === 'hard') {

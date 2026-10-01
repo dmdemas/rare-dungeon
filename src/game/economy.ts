@@ -97,7 +97,7 @@ export const HARD = {
  * F1 soft landing via higher STA; later floors drain the budget.
  * Target cum die ~30/60/90, clear ~10% — tune via `npm run sim:hard-floors`.
  */
-export const HARD_FLOOR_STAMINA = [0, 20, 17, 13] as const
+export const HARD_FLOOR_STAMINA = [0, 17, 18, 20] as const
 
 export function hardFloorStamina(floor: number): number {
   const f = Math.min(3, Math.max(1, Math.floor(floor)))

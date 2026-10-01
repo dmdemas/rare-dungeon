@@ -49,7 +49,7 @@ type Props = {
   liveSoft: number
   liveHard: number
   /** Open visual bot-mode simulation for this dungeon. */
-  onWatchSim?: (bp: DungeonBlueprint, friendPickSequence?: string[]) => void
+  onWatchSim?: (bp: DungeonBlueprint, friendPickSequence?: string[], raidSeed?: number) => void
 }
 
 function perksFromBlueprint(bp: DungeonBlueprint): SidePerkState<DungeonPerkId> {
@@ -210,9 +210,9 @@ function RaidSimPanel({
                           ? ' CLEARED — raider won'
                           : ` died floor ${s.floor} · bank $${s.bankAfter.toFixed(2)}`}
                       </div>
-                      {onWatch && (
+                      {onWatch && s.wiped && (
                         <button type="button" className="ghost raid-sim-watch-btn" onClick={() => onWatch(s)}>
-                          ▶ Watch
+                          ▶ Watch clear
                         </button>
                       )}
                     </div>
@@ -304,7 +304,7 @@ export function MyDungeons({
     const isActive = sim?.id === bp.id
     const makeWatchHandler = (_sim: RaidSim) =>
       onWatchSim
-        ? (step: RaidStep) => onWatchSim(bp, step.friendPickSequence as string[])
+        ? (step: RaidStep) => onWatchSim(bp, step.friendPickSequence as string[], step.raidSeed)
         : undefined
     if (isActive) {
       return (

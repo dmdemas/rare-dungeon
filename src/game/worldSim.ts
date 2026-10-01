@@ -103,6 +103,8 @@ export type RaidStep = {
   ticketsMinted: number
   /** Friend perks chosen per floor — used to replay the raid visually with identical outcome. */
   friendPickSequence: import('./headlessRaid').HeadlessRaidResult['friendPickSequence']
+  /** Combat/movement RNG seed for bit-perfect visual replay. */
+  raidSeed: number
 }
 
 /** Dungeon state after `step`. A wipe closes it: bank goes to the raider, tickets leave. */
@@ -151,6 +153,7 @@ export function runEconomyRaid(bp: DungeonBlueprint, rng: Rng): RaidStep {
       poolAdd: quote.toPool + rerolls$ + bank * cfg.clearFeeFrac,
       ticketsMinted: 0,
       friendPickSequence: result.friendPickSequence,
+      raidSeed: result.raidSeed,
     }
   }
   return {
@@ -164,5 +167,6 @@ export function runEconomyRaid(bp: DungeonBlueprint, rng: Rng): RaidStep {
     poolAdd: quote.toPool + rerolls$,
     ticketsMinted: tier === 'hard' ? ticketMintAtWin(wins + 1) : 0,
     friendPickSequence: result.friendPickSequence,
+    raidSeed: result.raidSeed,
   }
 }

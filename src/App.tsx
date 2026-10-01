@@ -112,6 +112,8 @@ export default function App() {
   const [lastWeekBurn, setLastWeekBurn] = useState(28.50)
   /** The player's own dungeons, raids and payouts (My Dungeons → History). */
   const [history, setHistory] = useState<PlayerEvent[]>([])
+  /** Sequential dungeon creation counter (My Dungeon #1, #2, …). */
+  const [dungeonSeq, setDungeonSeq] = useState(0)
   const logEvent = useCallback((e: PlayerEventInput) => setHistory((h) => [...h, playerEvent(e)]), [])
   const replayStepRef = useRef(0)
   const [nextTickAt, setNextTickAt] = useState(() => Date.now() + WORLD_STEP_MS)
@@ -315,6 +317,10 @@ export default function App() {
       setScreen({ kind: 'menu' })
       return
     }
+    const seq = dungeonSeq + 1
+    setDungeonSeq(seq)
+    const dungeonName = `My Dungeon #${seq}`
+
     if (tier === 'hard') {
       const ownedBp: DungeonBlueprint = {
         ...asHardDungeon(bp, { owned: true }),
@@ -324,10 +330,10 @@ export default function App() {
         mobSpawns: bp.mobSpawns,
         bank: settled.bank,
         invested: settled.invested,
-        name: bp.name.startsWith('Layout') ? `My Hard ${bp.name}` : bp.name,
+        name: dungeonName,
       }
       setPool((p) => [...p, ownedBp])
-      logEvent({ kind: 'created', tier: 'hard', name: ownedBp.name, cost: HARD.createCost })
+      logEvent({ kind: 'created', tier: 'hard', name: dungeonName, cost: HARD.createCost })
       showPopup('+1 DUNGEON', 'Added to My Dungeons')
     } else {
       const ownedBp: DungeonBlueprint = {
@@ -338,10 +344,10 @@ export default function App() {
         mobSpawns: bp.mobSpawns,
         bank: settled.bank,
         invested: settled.invested,
-        name: bp.name.startsWith('Layout') ? `My Soft ${bp.name}` : bp.name,
+        name: dungeonName,
       }
       setPool((p) => [...p, ownedBp])
-      logEvent({ kind: 'created', tier: 'soft', name: ownedBp.name, cost: SOFT.createCost })
+      logEvent({ kind: 'created', tier: 'soft', name: dungeonName, cost: SOFT.createCost })
       showPopup('+1 DUNGEON', 'Added to My Dungeons')
     }
     setLastError(null)

@@ -61,6 +61,8 @@ export function simulateRaid(
   plan: PlannedDungeonLoadout,
   rng: Rng,
   friendRerolls = 0,
+  /** Extra stamina granted at start of floors 2 and 3 (Hard sim buff). */
+  extraStaFloor23 = 0,
 ): HeadlessRaidResult {
   let perks = createEmptyPerksState()
   let raid = startRaid(bp, 1)
@@ -78,6 +80,10 @@ export function simulateRaid(
     if (offer) perks = selectFriendPerk(perks, botFriendPick(offer))
     perks = { ...perks, dungeon: revealDungeonPick(perks.dungeon, plan, floor - 1) }
     raid = syncRaidWithPerks(raid, perks)
+    // Hard sim buff: extra stamina on floors 2 and 3
+    if (floor >= 2 && extraStaFloor23 > 0) {
+      raid.friend.stamina += extraStaFloor23
+    }
 
     let ticks = 0
     while (raid.phase === 'running' && ticks++ < MAX_TICKS) raid = tickRaid(raid)

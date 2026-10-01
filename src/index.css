@@ -3256,7 +3256,7 @@ body {
 
 /* ─── Watch-dev centered toast ─────────────────────────────────────────────── */
 @keyframes watch-dev-in {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.88); }
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.90); }
   to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
@@ -3268,31 +3268,42 @@ body {
   z-index: 200;
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: #0e0e0e;
-  border: 1px solid #5a3a00;
-  box-shadow: 0 0 0 1px #000, 0 8px 32px rgba(0,0,0,0.75), inset 0 1px 0 #2a1a00;
-  padding: 14px 24px;
+  gap: 16px;
+  background: #090909;
+  border: 1px solid #8b6914;
+  box-shadow:
+    0 0 0 1px #000,
+    0 0 28px rgba(139, 105, 20, 0.28),
+    0 8px 40px rgba(0, 0, 0, 0.85);
+  padding: 20px 32px;
   border-radius: 4px;
   animation: watch-dev-in 0.18s ease-out both;
   pointer-events: none;
-  max-width: 340px;
-  text-align: center;
+  white-space: nowrap;
 }
 
 .watch-dev-toast-icon {
-  font-size: 20px;
-  opacity: 0.7;
+  font-size: 28px;
+  line-height: 1;
   flex-shrink: 0;
 }
 
-.watch-dev-toast-text {
+.watch-dev-toast strong {
+  display: block;
   font-family: inherit;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  color: #c8a060;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: #e0b030;
   text-transform: uppercase;
-  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.watch-dev-toast-sub {
+  font-family: inherit;
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 0.03em;
+  text-transform: none;
 }
 
 /* Sim confirm card */

@@ -486,6 +486,16 @@ export function MyDungeons({
 
   return (
     <div className="screen my-dungeons-screen">
+      {watchDevToast && (
+        <div className="watch-dev-toast">
+          <span className="watch-dev-toast-icon">⚔️</span>
+          <span>
+            <strong>WATCH MODE</strong>
+            <br />
+            <span className="watch-dev-toast-sub">Visual replay is still in development</span>
+          </span>
+        </div>
+      )}
       <header className="screen-header">
         <button type="button" className="ghost" onClick={onBack}>
           ← Back

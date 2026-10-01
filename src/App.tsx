@@ -927,6 +927,10 @@ export default function App() {
                 Numbers are in dollars so they are easy to read. In the real game everything settles in{' '}
                 <strong>Rare Friends</strong> tokens.
               </p>
+              <p className="demo-intro-note">
+                (For a full release: only interchangeable perks, probability tuning via config, and playtests
+                are needed — straightforward to implement, just ran out of time.)
+              </p>
               <p className="demo-intro-signoff">
                 Have fun, and good luck!
                 <span className="demo-intro-sign">@0xCephal</span>

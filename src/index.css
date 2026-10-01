@@ -2746,6 +2746,14 @@ body {
   color: #fff;
 }
 
+.demo-intro-note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  line-height: 1.5;
+}
+
 .demo-intro-signoff {
   margin-top: 6px;
 }

@@ -55,10 +55,13 @@ type Props = {
 type Mode = 'home' | 'play' | 'create'
 type Info = null | 'how' | 'economy' | 'deposit'
 
+const ADULT_KEY = 'rd_adult_ok'
+
 export function Menu(props: Props) {
   const { wallet, owned, worldPool, feed } = props
   const [mode, setMode] = useState<Mode>('home')
   const [info, setInfo] = useState<Info>(null)
+  const [adultOk, setAdultOk] = useState(() => !!localStorage.getItem(ADULT_KEY))
   const now = useNow(1000)
 
   const raidable = useMemo(() => worldPool.filter((d) => !d.isOwned), [worldPool])
@@ -296,6 +299,42 @@ export function Menu(props: Props) {
       )}
 
       {info && info !== 'deposit' && <InfoOverlay kind={info} onClose={() => setInfo(null)} />}
+
+      {!adultOk && (
+        <div className="info-overlay adult-overlay" role="dialog" aria-label="Age confirmation">
+          <div className="card info-card adult-card" onClick={(e) => e.stopPropagation()}>
+            <div className="info-card-head">
+              <span className="action-title">⚠ FOR ADULTS ONLY</span>
+            </div>
+            <div className="adult-body">
+              <p>
+                Rare Dungeon is a skill-based strategy game involving real monetary stakes.
+                By continuing you confirm you are <strong>18 years of age or older</strong> and
+                understand the financial risks involved.
+              </p>
+              <p>
+                All in-game funds are currently simulated. On-chain real-money play is coming in a future update.
+                Play responsibly.
+              </p>
+              <p className="adult-disclaimer">
+                (Balance in the game with real players may differ from simulations.
+                In the early stages, nerfs may be necessary for balance.)
+              </p>
+            </div>
+            <button
+              type="button"
+              className="connect"
+              style={{ width: '100%' }}
+              onClick={() => {
+                localStorage.setItem(ADULT_KEY, '1')
+                setAdultOk(true)
+              }}
+            >
+              I'm 18+ — Continue
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1751,7 +1751,8 @@ body {
 }
 
 .nav-btn--pulse {
-  animation: nav-pulse 2s ease-in-out infinite;
+  animation: nav-pulse 2s ease-in-out 5; /* 5 × 2s = 10 seconds, then stops */
+  animation-fill-mode: forwards;
 }
 
 .nav-btn--pulse:hover {
@@ -2811,6 +2812,37 @@ body {
 
 .info-card--how {
   width: min(820px, 100%);
+}
+
+/* Adult confirmation overlay */
+.adult-overlay {
+  z-index: 100;
+}
+
+.adult-card {
+  max-width: 460px;
+  width: 90%;
+}
+
+.adult-body {
+  padding: 4px 0 16px;
+}
+
+.adult-body p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.adult-body p:last-child {
+  margin-bottom: 0;
+}
+
+.adult-disclaimer {
+  font-size: 12px !important;
+  color: #666 !important;
+  font-style: italic;
 }
 
 .info-how-notice {

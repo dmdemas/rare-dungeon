@@ -137,19 +137,25 @@ function dungeonComplexityScore(bp: DungeonBlueprint): number {
 
 /**
  * Per-raid wipe probability, calibrated to golden-rule survival curves.
- * Hard avg ≈ 7-8 raids (wipe ~12-13%/raid). Easy/complex shifts ±5%.
- * Soft avg ≈ 3-4 raids (wipe ~28-33%/raid).
+ *
+ * Hard:  cx 0→1 maps wipe 17%→11%.  At cx=0.5 (avg dungeon):
+ *        14% wipe → avg ~7.1 raids, P(survive 25 raids) ≈ 2.1% ≈ golden 2.5%.
+ *
+ * Soft:  cx 0→1 maps wipe 33%→25%.  At cx=0.5:
+ *        29% wipe → avg ~3.4 raids, P(survive 25 raids) < 1%.
+ *
+ * Owner dungeon perks rank into perkTotal → complexity score → lower wipe.
+ * Stronger perks (high rank Walls/Horde/Claws…) keep the dungeon alive longer.
  */
 function dungeonWipeRate(bp: DungeonBlueprint): number {
-  const tier  = bp.tier ?? 'soft'
-  const cx    = dungeonComplexityScore(bp)
+  const tier = bp.tier ?? 'soft'
+  const cx   = dungeonComplexityScore(bp)
   if (tier === 'hard') {
-    // Complexity 0 → 18% wipe/raid (avg 5.5); complexity 1 → 8% (avg 12.5)
-    // Sweet spot ~50% complexity = 13% ≈ avg 7.7 raids
-    return 0.18 - cx * 0.10
+    // Range 11–17%; even the hardest dungeon stays capped ≤ 2.5% P(25) approx.
+    return 0.17 - cx * 0.06
   }
-  // Soft: complexity 0 → 38% (avg 2.6); complexity 1 → 22% (avg 4.5)
-  return 0.38 - cx * 0.16
+  // Soft: range 25–33%
+  return 0.33 - cx * 0.08
 }
 
 /** Floor the raider reached before dying (conditional on NOT wiping). */
@@ -486,16 +492,6 @@ export function MyDungeons({
 
   return (
     <div className="screen my-dungeons-screen">
-      {watchDevToast && (
-        <div className="watch-dev-toast">
-          <span className="watch-dev-toast-icon">⚔️</span>
-          <span>
-            <strong>WATCH MODE</strong>
-            <br />
-            <span className="watch-dev-toast-sub">Visual replay is still in development</span>
-          </span>
-        </div>
-      )}
       <header className="screen-header">
         <button type="button" className="ghost" onClick={onBack}>
           ← Back
@@ -663,11 +659,15 @@ export function MyDungeons({
       )}
 
       {watchDevToast && (
-        <div className="watch-dev-toast" role="status">
-          <span className="watch-dev-toast-icon">⚔</span>
-          <span className="watch-dev-toast-text">
-            Watch mode — coming in a future update
-          </span>
+        <div
+          className="watch-dev-toast"
+          role="status"
+          onClick={() => setWatchDevToast(false)}
+        >
+          <div className="watch-dev-toast-inner">
+            <span className="watch-dev-toast-title">⚔ WATCH MODE</span>
+            <span className="watch-dev-toast-sub">Visual replay is still in development</span>
+          </div>
         </div>
       )}
 

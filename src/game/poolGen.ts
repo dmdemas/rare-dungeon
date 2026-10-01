@@ -151,8 +151,8 @@ export function pickCreatePair(
   let j = Math.floor(rng() * (seeds.length - 1))
   if (j >= i) j++
   return [
-    generateBlueprint(seeds[i]!, 'Layout A'),
-    generateBlueprint(seeds[j]!, 'Layout B'),
+    generateBlueprint(seeds[i]!, 'Layout A', tier),
+    generateBlueprint(seeds[j]!, 'Layout B', tier),
   ]
 }
 

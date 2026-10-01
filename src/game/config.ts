@@ -58,6 +58,18 @@ export const MOB_COUNT_WEIGHTS: { count: number; weight: number }[] = [
 ]
 
 /**
+ * Hard-only mob spawn weights (lower mob density).
+ * Cumulative: ≥1 100%, ≥2 30%, ≥3 15%, ≥4 2%.
+ * Individual: 1→70, 2→15, 3→13, 4→2.
+ */
+export const HARD_MOB_COUNT_WEIGHTS: { count: number; weight: number }[] = [
+  { count: 1, weight: 70 },
+  { count: 2, weight: 15 },
+  { count: 3, weight: 13 },
+  { count: 4, weight: 2 },
+]
+
+/**
  * Chance to take a safe detour around a mob instead of charging forward / fighting.
  * ~10–15%; the rest of the time prefer shortest forward path (into the fight).
  */

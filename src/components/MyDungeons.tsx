@@ -145,11 +145,10 @@ function raidLine(step: RaidStep, i: number): string {
 function RaidSimPanel({
   sim,
   onClose,
-  onWatch,
 }: {
   sim: RaidSim
   onClose: () => void
-  onWatch?: () => void
+  onWatch?: () => void  // reserved for future use
 }) {
   const done = sim.shown >= sim.steps.length
   const wiped = sim.steps[sim.steps.length - 1]?.wiped ?? false
@@ -210,11 +209,6 @@ function RaidSimPanel({
                           ? ' CLEARED — raider won'
                           : ` died floor ${s.floor} · bank $${s.bankAfter.toFixed(2)}`}
                       </div>
-                      {onWatch && (
-                        <button type="button" className="ghost raid-sim-watch-btn" onClick={onWatch}>
-                          ▶ Watch
-                        </button>
-                      )}
                     </div>
                   )
                 })}
@@ -246,8 +240,6 @@ export function MyDungeons({
   const finished = owned.filter((d) => d.status === 'closed').slice().reverse()
   const [viewing, setViewing] = useState<DungeonBlueprint | null>(null)
   const [sim, setSim] = useState<RaidSim | null>(null)
-  /** Dungeon waiting for "Watch sim?" confirm before running. */
-  const [simConfirmBp, setSimConfirmBp] = useState<DungeonBlueprint | null>(null)
   /** Extend picker value per paused dungeon. */
   const [extendBy, setExtendBy] = useState<Record<string, number>>({})
   const simRunning = sim !== null && sim.shown < sim.steps.length
@@ -484,7 +476,7 @@ export function MyDungeons({
                             type="button"
                             className="ghost"
                             disabled={simRunning}
-                            onClick={() => setSimConfirmBp(bp)}
+                            onClick={() => setSim(planRaidSim(bp))}
                           >
                             Simulate raids
                           </button>
@@ -537,50 +529,6 @@ export function MyDungeons({
         />
       )}
 
-      {simConfirmBp && (
-        <div
-          className="create-leave create-leave--fixed"
-          role="alertdialog"
-          aria-label="Simulate raids"
-          onClick={() => setSimConfirmBp(null)}
-        >
-          <div className="card create-leave-card sim-confirm-card" onClick={(e) => e.stopPropagation()}>
-            <div className="action-title">SIMULATE RAIDS</div>
-            <p className="card-sub">
-              Watch how raiders play <strong>{simConfirmBp.name}</strong> — or just see the text log.
-            </p>
-            <div className="create-leave-actions sim-confirm-actions">
-              <button
-                type="button"
-                className="ghost"
-                onClick={() => {
-                  const bp = simConfirmBp
-                  setSimConfirmBp(null)
-                  setSim(planRaidSim(bp))
-                }}
-              >
-                Text log
-              </button>
-              {onWatchSim && (
-                <button
-                  type="button"
-                  className="connect"
-                  onClick={() => {
-                    const bp = simConfirmBp
-                    setSimConfirmBp(null)
-                    onWatchSim(bp)
-                  }}
-                >
-                  ▶ Watch live (5 raids)
-                </button>
-              )}
-              <button type="button" className="ghost" onClick={() => setSimConfirmBp(null)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

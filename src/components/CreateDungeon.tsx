@@ -81,14 +81,14 @@ export function CreateDungeon({ options, createCost, onPay: _onPay, onPick, onBa
     if (offer) return
     const seed = (Math.random() * 0x100000000) >>> 0
     // Keep offerRerolls across perk rounds — Hard ladder is per create session
-    setOffer(rollOffer('dungeon', dungeonPerks.ranks, mulberry32(seed), selected?.isCorridor ?? false))
-  }, [selected, perkRound, slotsFull, offer, dungeonPerks.ranks])
+    setOffer(rollOffer('dungeon', dungeonPerks.ranks, mulberry32(seed), selected?.isCorridor ?? false, tier === 'hard'))
+  }, [selected, perkRound, slotsFull, offer, dungeonPerks.ranks, tier])
 
   const onRerollOffer = () => {
     if (!offerReroll || !offer || !selected) return
     if (!offerReroll.tryPay(offerRerolls)) return
     const seed = (Math.random() * 0x100000000) >>> 0
-    setOffer(rollOffer('dungeon', dungeonPerks.ranks, mulberry32(seed), selected?.isCorridor ?? false))
+    setOffer(rollOffer('dungeon', dungeonPerks.ranks, mulberry32(seed), selected?.isCorridor ?? false, tier === 'hard'))
     setOfferRerolls((n) => n + 1)
   }
 

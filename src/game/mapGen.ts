@@ -4,6 +4,7 @@ import {
   MAP_H,
   MAP_W,
   MOB_COUNT_WEIGHTS,
+  HARD_MOB_COUNT_WEIGHTS,
   WALL_COUNT_WEIGHTS,
 } from './config'
 import { bfsPath, hasPath, inBounds, neighbors4 } from './pathfinding'
@@ -228,14 +229,17 @@ function spawnMobs(
   return picked
 }
 
-export function generateMap(rng: Rng): { map: DungeonMap; mobSpawns: { x: number; y: number }[] } {
+export function generateMap(
+  rng: Rng,
+  mobWeights = MOB_COUNT_WEIGHTS,
+): { map: DungeonMap; mobSpawns: { x: number; y: number }[] } {
   let best: { map: DungeonMap; mobSpawns: { x: number; y: number }[] } | null = null
   for (let attempt = 0; attempt < 30; attempt++) {
     const tiles = emptyTiles(rng)
     const wallTarget = pickWeighted(rng, WALL_COUNT_WEIGHTS).count
     placeWalls(rng, tiles, wallTarget)
     if (!pathOpen(tiles)) continue
-    const mobCount = pickWeighted(rng, MOB_COUNT_WEIGHTS).count
+    const mobCount = pickWeighted(rng, mobWeights).count
     const mobSpawns = spawnMobs(rng, tiles, mobCount)
     if (mobSpawns.length < 1) continue
     const map: DungeonMap = { tiles: [...tiles], walls: wallSetFromTiles(tiles) }
@@ -389,10 +393,15 @@ export function computeCorridorFlag(tiles: TileKind[]): boolean {
   return path !== null && path.length - 1 >= 18
 }
 
-export function generateBlueprint(seed?: number, name?: string): DungeonBlueprint {
+export function generateBlueprint(
+  seed?: number,
+  name?: string,
+  tier: 'soft' | 'hard' = 'soft',
+): DungeonBlueprint {
   const mapSeed = seed ?? (Math.random() * 1e9) | 0
   const rng = mulberry32(mapSeed)
-  const { map, mobSpawns } = generateMap(rng)
+  const mobWeights = tier === 'hard' ? HARD_MOB_COUNT_WEIGHTS : MOB_COUNT_WEIGHTS
+  const { map, mobSpawns } = generateMap(rng, mobWeights)
   const isCorridor = computeCorridorFlag(map.tiles)
   return {
     id: `dungeon-${idSeq++}`,

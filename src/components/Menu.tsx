@@ -136,7 +136,7 @@ export function Menu(props: Props) {
         <div className="menu-mobile-actions">
           <button type="button" className="card action-tile" onClick={() => setMode('play')}>
             <PixelIcon name="swords" size={52} />
-            <span className="action-title">PLAY</span>
+            <span className="action-title">RAID</span>
           </button>
           <button type="button" className="card action-tile" onClick={() => setMode('create')}>
             <img src={assetUrl('/dungeon-icon.png')} alt="Dungeon" className="action-tile-icon" />
@@ -217,7 +217,7 @@ export function Menu(props: Props) {
           <div className="action-row">
             <button type="button" className="card action-tile" onClick={() => setMode('play')}>
               <PixelIcon name="swords" size={72} />
-              <span className="action-title">PLAY</span>
+              <span className="action-title">RAID</span>
             </button>
             <button type="button" className="card action-tile" onClick={() => setMode('create')}>
               <img src={assetUrl('/dungeon-icon.png')} alt="Dungeon" className="action-tile-icon" />
@@ -328,9 +328,9 @@ function TierChooser(p: {
   }, [])
 
   return (
-    <div className="tier-overlay" role="dialog" aria-label={play ? 'Choose dungeon to play' : 'Choose dungeon to create'} onClick={p.onBack}>
+    <div className="tier-overlay" role="dialog" aria-label={play ? 'Choose dungeon to raid' : 'Choose dungeon to create'} onClick={p.onBack}>
       <div className="tier-overlay-title">
-        <span className="action-title">{play ? 'PLAY — CHOOSE DUNGEON' : 'CREATE — CHOOSE DUNGEON'}</span>
+        <span className="action-title">{play ? 'RAID — CHOOSE DUNGEON' : 'CREATE — CHOOSE DUNGEON'}</span>
         <span className="card-sub">Esc to close</span>
       </div>
       <div className="tier-overlay-cards">
@@ -412,7 +412,7 @@ function TierChooser(p: {
                         ? 'MAX 3 LIVE DUNGEONS'
                         : broke
                           ? `NEED ${money(price)}`
-                          : `${play ? 'PLAY' : 'CREATE'} ${tier === 'hard' ? 'HARD' : 'SIMPLE'} →`}
+                          : `${play ? 'RAID' : 'CREATE'} ${tier === 'hard' ? 'HARD' : 'SIMPLE'} →`}
                     </div>
                   </div>
                   <div className="tier-card-ticket-stub">
@@ -454,10 +454,10 @@ function InfoOverlay({ kind, onClose }: { kind: 'how' | 'economy'; onClose: () =
           />
         ) : (
           <div className="info-how">
-            <p className="info-how-lead">First pick a mode: PLAY or CREATE DUNGEON.</p>
+            <p className="info-how-lead">First pick a mode: RAID or CREATE DUNGEON.</p>
             <div className="info-how-cols">
               <section className="info-how-col">
-                <h3>PLAY</h3>
+                <h3>RAID</h3>
                 <p>Choose Simple or Hard.</p>
                 <p>
                   Pay the entry and send your Friend through 3 floors. Each floor you pick a perk; the dungeon
@@ -488,6 +488,13 @@ function InfoOverlay({ kind, onClose }: { kind: 'how' | 'economy'; onClose: () =
                   bank. Close too early and tax eats most of it.
                 </p>
               </section>
+            </div>
+            <div className="info-how-footer">
+              <p>
+                Dungeons created in <strong>Create Dungeon</strong> mode go into the shared pool — the same
+                pool that raiders pick from when they press <strong>RAID</strong>. That's the heart of the
+                game: dungeon owners and raiders are always playing against each other.
+              </p>
             </div>
           </div>
         )}

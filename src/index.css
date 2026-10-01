@@ -3265,6 +3265,34 @@ body {
   color: #dc503c;
 }
 
+/* Result card shown after each raid */
+.sim-watch-result-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.65);
+}
+
+.sim-watch-result-card {
+  text-align: center;
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 380px;
+  width: 90%;
+}
+
+.sim-watch-result-title {
+  font-family: var(--pixel);
+  font-size: 28px;
+  letter-spacing: 0.05em;
+}
+
 /* Legacy — keep for backward compat */
 .raid-sim-log li {
   display: flex;

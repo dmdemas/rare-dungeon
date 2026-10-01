@@ -260,31 +260,50 @@ export default function App() {
   /** No-op — fee is now charged upfront in openCreate. */
   const payCreate = (): boolean => true
 
+  /** Live raid state for the sim-watch screen (updated by RaidView via onRaidChange). */
+  const [simWatchRaid, setSimWatchRaid] = useState<RaidState | null>(null)
+  /** Result of the last sim-watch raid, waiting for the user to press Next. */
+  const [simWatchPending, setSimWatchPending] = useState<SimWatchResult | null>(null)
+
   /** Open bot-mode visual simulation for an owned dungeon. */
   const startSimWatch = (bp: DungeonBlueprint) => {
     setActiveBlueprint(bp)
+    setSimWatchRaid(startRaid(bp))
+    setSimWatchPending(null)
     setScreen({ kind: 'simWatch', blueprint: bp, raidIndex: 1, results: [] })
   }
 
-  /** Called when a sim-watch raid ends; advances to the next or returns to My Dungeons. */
+  const onSimWatchRaidChange = useCallback((r: RaidState) => setSimWatchRaid(r), [])
+
+  /** Called when a sim-watch raid ends: show result card first. */
   const onSimWatchOutcome = useCallback(
     (result: 'won' | 'dead' | 'surrendered', floor: number) => {
       setScreen((prev) => {
         if (prev.kind !== 'simWatch') return prev
         const entry: SimWatchResult = { index: prev.raidIndex, won: result === 'won', floor }
-        const results = [...prev.results, entry]
-        const next = prev.raidIndex + 1
-        if (next > 5) {
-          // Done — back to My Dungeons
-          setActiveBlueprint(null)
-          return { kind: 'myDungeons' }
-        }
-        // Start next raid by refreshing the raid state through activeBlueprint
-        return { kind: 'simWatch', blueprint: prev.blueprint, raidIndex: next, results }
+        setSimWatchPending(entry)
+        return { ...prev, results: [...prev.results, entry] }
       })
     },
     [],
   )
+
+  /** Advance to the next sim-watch raid or return to My Dungeons. */
+  const advanceSimWatch = useCallback(() => {
+    setSimWatchPending(null)
+    setScreen((prev) => {
+      if (prev.kind !== 'simWatch') return prev
+      const next = prev.raidIndex + 1
+      if (next > 5) {
+        setActiveBlueprint(null)
+        setSimWatchRaid(null)
+        return { kind: 'myDungeons' }
+      }
+      const bp = prev.blueprint
+      setSimWatchRaid(startRaid(bp))
+      return { kind: 'simWatch', blueprint: bp, raidIndex: next, results: prev.results }
+    })
+  }, [])
 
   const pickCreated = (bp: DungeonBlueprint) => {
     const tier = bp.tier ?? pendingTier
@@ -824,11 +843,16 @@ export default function App() {
         />
       )}
 
-      {screen.kind === 'simWatch' && activeBlueprint && (
+      {screen.kind === 'simWatch' && activeBlueprint && simWatchRaid && (
         <div className="sim-watch-screen">
+          {/* HUD: exit + counter + pip history */}
           <div className="sim-watch-hud">
-            <button type="button" className="ghost sim-watch-back" onClick={() => { setActiveBlueprint(null); setScreen({ kind: 'myDungeons' }) }}>
-              ✕ Exit
+            <button
+              type="button"
+              className="ghost sim-watch-back"
+              onClick={() => { setActiveBlueprint(null); setSimWatchRaid(null); setSimWatchPending(null); setScreen({ kind: 'myDungeons' }) }}
+            >
+              ← Back
             </button>
             <span className="sim-watch-counter">
               Raid {screen.raidIndex} / 5 — {activeBlueprint.name}
@@ -841,14 +865,39 @@ export default function App() {
               ))}
             </div>
           </div>
+
+          {/* Full raid visual — character moves and bot picks perks */}
           <RaidView
             key={screen.raidIndex}
-            raid={startRaid(activeBlueprint)}
+            raid={simWatchRaid}
             blueprint={activeBlueprint}
-            onRaidChange={() => {}}
+            onRaidChange={onSimWatchRaidChange}
             onOutcome={onSimWatchOutcome}
             botMode
           />
+
+          {/* Result card shown after each raid ends */}
+          {simWatchPending && (
+            <div className="sim-watch-result-overlay">
+              <div className="card sim-watch-result-card">
+                <div className={`sim-watch-result-title ${simWatchPending.won ? 'txt-win' : 'txt-loss'}`}>
+                  {simWatchPending.won ? '✓ CLEARED' : `✗ DIED — FLOOR ${simWatchPending.floor}`}
+                </div>
+                <p className="card-sub">
+                  {simWatchPending.won
+                    ? 'The raider cleared all floors and robbed the dungeon.'
+                    : `The raider died on floor ${simWatchPending.floor} — entry stays in the bank.`}
+                </p>
+                <button
+                  type="button"
+                  className="connect"
+                  onClick={advanceSimWatch}
+                >
+                  {screen.raidIndex >= 5 ? 'Done →' : `Next raid (${screen.raidIndex + 1} / 5) →`}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

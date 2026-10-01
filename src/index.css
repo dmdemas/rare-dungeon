@@ -3254,56 +3254,44 @@ body {
   opacity: 1;
 }
 
-/* ─── Watch-dev centered toast ─────────────────────────────────────────────── */
-@keyframes watch-dev-in {
-  from { opacity: 0; transform: translate(-50%, -52%) scale(0.90); }
-  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+/* ─── Watch "in development" top banner ──────────────────────────────────── */
+@keyframes watch-dev-slide {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* Full-screen overlay → click anywhere to dismiss */
 .watch-dev-toast {
   position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.45);
-  animation: watch-dev-in 0.18s ease-out both;
-}
-
-.watch-dev-toast-inner {
-  background: #090909;
-  border: 1px solid #8b6914;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  background: #111;
+  border: 1px solid #4a3800;
   border-top: 2px solid #c8a84b;
-  box-shadow:
-    0 0 0 1px #000,
-    0 0 28px rgba(200, 168, 75, 0.25),
-    0 12px 48px rgba(0, 0, 0, 0.90);
-  padding: 28px 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+  padding: 8px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  min-width: 300px;
+  gap: 2px;
   pointer-events: none;
+  animation: watch-dev-slide 0.15s ease-out both;
+  white-space: nowrap;
 }
 
 .watch-dev-toast-title {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: bold;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   color: #c8a84b;
   text-transform: uppercase;
 }
 
 .watch-dev-toast-sub {
-  font-family: inherit;
-  font-size: 11px;
+  font-size: 10px;
   color: #666;
-  letter-spacing: 0.03em;
-  text-transform: none;
+  letter-spacing: 0.02em;
 }
 
 /* Sim confirm card */

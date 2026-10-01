@@ -659,15 +659,9 @@ export function MyDungeons({
       )}
 
       {watchDevToast && (
-        <div
-          className="watch-dev-toast"
-          role="status"
-          onClick={() => setWatchDevToast(false)}
-        >
-          <div className="watch-dev-toast-inner">
-            <span className="watch-dev-toast-title">⚔ WATCH MODE</span>
-            <span className="watch-dev-toast-sub">Visual replay is still in development</span>
-          </div>
+        <div className="watch-dev-toast" role="status" aria-live="polite">
+          <span className="watch-dev-toast-title">▶ Watch Mode</span>
+          <span className="watch-dev-toast-sub">Visual replay is still in development</span>
         </div>
       )}
 

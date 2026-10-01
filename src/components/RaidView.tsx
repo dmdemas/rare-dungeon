@@ -50,6 +50,8 @@ type Props = {
   botMode?: boolean
   /** Windowed mode: raid renders in a smaller framed box, not fullscreen. */
   windowed?: boolean
+  /** Called when user clicks Back or presses Esc in windowed mode. */
+  onBack?: () => void
 }
 
 export function RaidView({
@@ -62,6 +64,7 @@ export function RaidView({
   offerReroll = null,
   botMode = false,
   windowed = false,
+  onBack,
 }: Props) {
   const isGridDemo = !!blueprint.isGridDemo
   const pitCliffStyle = blueprint.pitCliffStyle ?? 4
@@ -132,8 +135,15 @@ export function RaidView({
   // Esc asks before leaving (the entry is lost); the raid is paused while asking.
   const [confirmExit, setConfirmExit] = useState(false)
   const speedBeforeExitRef = useRef<Speed>(1)
+  const onBackRef = useRef(onBack)
+  onBackRef.current = onBack
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Windowed bot-watch: Esc just closes the overlay
+      if (windowed) {
+        if (e.key === 'Escape') { e.preventDefault(); onBackRef.current?.() }
+        return
+      }
       if (isGridDemo) {
         if (e.key === 'Escape') onOutcomeRef.current('surrendered', raidRef.current.floor)
         return
@@ -157,7 +167,7 @@ export function RaidView({
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [isGridDemo, confirmExit])
+  }, [isGridDemo, confirmExit, windowed])
 
   const triggerHurtFlash = () => {
     setFriendHurt(true)
@@ -663,7 +673,11 @@ export function RaidView({
                 {label}
               </button>
             ))}
-            {isGridDemo ? (
+            {windowed ? (
+              <button type="button" className="ghost" onClick={onBack}>
+                ← Back (Esc)
+              </button>
+            ) : isGridDemo ? (
               <button type="button" className="ghost" onClick={() => onOutcome('surrendered', raid.floor)}>
                 Back (Esc)
               </button>
@@ -721,7 +735,7 @@ export function RaidView({
             </div>
           </div>
         )}
-        {!isGridDemo && clock === 'perks' && friendOffer && (
+        {!isGridDemo && !botMode && clock === 'perks' && friendOffer && (
           <PerkOfferOverlay
             label="Choose a Friend perk"
             side="friend"
@@ -743,7 +757,7 @@ export function RaidView({
         {!isGridDemo && (
           <StaminaBar raid={raid} friendHurt={friendHurt} />
         )}
-        {!isGridDemo && (
+        {!isGridDemo && !windowed && (
           <RewardDashboard
             className="reward-dash--raid"
             tier={blueprint.tier ?? 'soft'}

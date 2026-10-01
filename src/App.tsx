@@ -861,6 +861,7 @@ export default function App() {
             blueprint={activeBlueprint}
             onRaidChange={onSimWatchRaidChange}
             onOutcome={onSimWatchOutcome}
+            onBack={closeSimWatch}
             botMode
             windowed
           />

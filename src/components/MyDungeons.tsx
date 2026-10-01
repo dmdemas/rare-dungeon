@@ -291,7 +291,7 @@ function RaidSimPanel({
           {sim.steps.length >= 1 && (
             <>
               <p className="card-label raid-sim-last-label">
-                LAST {Math.min(3, sim.steps.length)} RAIDS — ▶ Watch
+                LAST {Math.min(3, sim.steps.length)} RAIDS
               </p>
               <div className="raid-sim-cards">
                 {last3.map((s, idx) => {

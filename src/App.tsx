@@ -775,7 +775,7 @@ export default function App() {
         />
       )}
 
-      {screen.kind === 'myDungeons' && (
+      {(screen.kind === 'myDungeons' || screen.kind === 'simWatch') && (
         <MyDungeons
           owned={owned}
           raiderTickets={raiderTicketPower}

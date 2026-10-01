@@ -248,6 +248,8 @@ export function MyDungeons({
   const [sim, setSim] = useState<RaidSim | null>(null)
   /** Completed simulation logs keyed by dungeon id — persist across sim open/close. */
   const [simLogs, setSimLogs] = useState<Record<string, RaidSim>>({})
+  /** Dungeon ids whose sim log is currently hidden by the user. */
+  const [hiddenLogs, setHiddenLogs] = useState<Set<string>>(new Set())
   /** Extend picker value per paused dungeon. */
   const [extendBy, setExtendBy] = useState<Record<string, number>>({})
   const simRunning = sim !== null && sim.shown < sim.steps.length
@@ -296,6 +298,32 @@ export function MyDungeons({
   }, [viewing, viewPerks])
 
   const hasFog = (viewPerks.ranks.fog ?? 0) > 0
+
+  /** Show sim panel for a dungeon: active sim takes priority, then logged (if not hidden). */
+  const renderSimPanel = (bp: DungeonBlueprint) => {
+    const isActive = sim?.id === bp.id
+    if (isActive) {
+      return (
+        <RaidSimPanel
+          sim={sim!}
+          onClose={() => {
+            setSim(null)
+            setHiddenLogs((s) => new Set([...s, bp.id]))
+          }}
+          onWatch={onWatchSim ? () => onWatchSim(bp) : undefined}
+        />
+      )
+    }
+    const logged = simLogs[bp.id]
+    if (!logged || hiddenLogs.has(bp.id)) return null
+    return (
+      <RaidSimPanel
+        sim={logged}
+        onClose={() => setHiddenLogs((s) => new Set([...s, bp.id]))}
+        onWatch={onWatchSim ? () => onWatchSim(bp) : undefined}
+      />
+    )
+  }
 
   /** Claim is allowed between simulated raids: the raids not yet shown never happen. */
   const claim = (id: string) => {
@@ -490,7 +518,10 @@ export function MyDungeons({
                             type="button"
                             className="ghost"
                             disabled={simRunning}
-                            onClick={() => setSim(planRaidSim(bp))}
+                            onClick={() => {
+                              setHiddenLogs((s) => { const n = new Set(s); n.delete(bp.id); return n })
+                              setSim(planRaidSim(bp))
+                            }}
                           >
                             {simLogs[bp.id] ? 'Simulate again' : 'Simulate raids'}
                           </button>
@@ -508,38 +539,14 @@ export function MyDungeons({
                     </div>
                   </div>
                 </article>
-                {(() => {
-                  const activeSim = sim?.id === bp.id ? sim : null
-                  const loggedSim = simLogs[bp.id]
-                  const shownSim = activeSim ?? loggedSim
-                  if (!shownSim) return null
-                  return (
-                    <RaidSimPanel
-                      sim={shownSim}
-                      onClose={() => setSim(null)}
-                      onWatch={onWatchSim ? () => { setSim(null); onWatchSim(bp) } : undefined}
-                    />
-                  )
-                })()}
+                {renderSimPanel(bp)}
                 </Fragment>
               )
             })}
             {finished.map((bp) => (
               <Fragment key={bp.id}>
                 <FinishedCard bp={bp} onView={() => setViewing(bp)} />
-                {(() => {
-                  const activeSim = sim?.id === bp.id ? sim : null
-                  const loggedSim = simLogs[bp.id]
-                  const shownSim = activeSim ?? loggedSim
-                  if (!shownSim) return null
-                  return (
-                    <RaidSimPanel
-                      sim={shownSim}
-                      onClose={() => setSim(null)}
-                      onWatch={onWatchSim ? () => { setSim(null); onWatchSim(bp) } : undefined}
-                    />
-                  )
-                })()}
+                {renderSimPanel(bp)}
               </Fragment>
             ))}
           </div>

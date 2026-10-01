@@ -3291,6 +3291,9 @@ body {
 /* Windowed raid: smaller, framed, centered over dark backdrop */
 .raid-screen--windowed {
   background: rgba(0, 0, 0, 0.82);
+  position: fixed;
+  inset: 0;
+  z-index: 50;
 }
 
 .raid-screen--windowed .raid-stage {
@@ -3357,9 +3360,9 @@ body {
 
 /* Result card shown after each raid */
 .sim-watch-result-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 60;
   display: flex;
   align-items: center;
   justify-content: center;

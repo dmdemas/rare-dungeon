@@ -145,10 +145,11 @@ function raidLine(step: RaidStep, i: number): string {
 function RaidSimPanel({
   sim,
   onClose,
+  onWatch,
 }: {
   sim: RaidSim
   onClose: () => void
-  onWatch?: () => void  // reserved for future use
+  onWatch?: () => void
 }) {
   const done = sim.shown >= sim.steps.length
   const wiped = sim.steps[sim.steps.length - 1]?.wiped ?? false
@@ -189,26 +190,31 @@ function RaidSimPanel({
                   ? `Claimed after ${sim.steps.length} raids.`
                   : `Held all ${sim.steps.length} raids — dungeon survived.`}
             {' · '}
-            <button type="button" className="ghost" onClick={onClose}>Close</button>
+            <button type="button" className="ghost" onClick={onClose}>Hide</button>
           </p>
 
           {sim.steps.length >= 1 && (
             <>
               <p className="card-label raid-sim-last-label">
-                LAST {Math.min(3, sim.steps.length)} RAIDS — click ▶ Watch to see it live
+                LAST {Math.min(3, sim.steps.length)} RAIDS{onWatch ? ' — ▶ Watch to see a raid live' : ''}
               </p>
               <div className="raid-sim-cards">
                 {last3.map((s, idx) => {
                   const raidNum = last3Start + idx + 1
                   return (
                     <div key={idx} className={`raid-sim-card ${s.wiped ? 'raid-sim-card--wiped' : 'raid-sim-card--held'}`}>
-                      <div className="raid-sim-card-num">Raid {raidNum}</div>
+                      <div className="raid-sim-card-num">Raider {raidNum}</div>
                       <div className="raid-sim-card-outcome">
                         <PixelIcon name={s.wiped ? 'friend' : 'skull'} size={14} />
                         {s.wiped
                           ? ' CLEARED — raider won'
                           : ` died floor ${s.floor} · bank $${s.bankAfter.toFixed(2)}`}
                       </div>
+                      {onWatch && (
+                        <button type="button" className="ghost raid-sim-watch-btn" onClick={onWatch}>
+                          ▶ Watch
+                        </button>
+                      )}
                     </div>
                   )
                 })}
@@ -240,6 +246,8 @@ export function MyDungeons({
   const finished = owned.filter((d) => d.status === 'closed').slice().reverse()
   const [viewing, setViewing] = useState<DungeonBlueprint | null>(null)
   const [sim, setSim] = useState<RaidSim | null>(null)
+  /** Completed simulation logs keyed by dungeon id — persist across sim open/close. */
+  const [simLogs, setSimLogs] = useState<Record<string, RaidSim>>({})
   /** Extend picker value per paused dungeon. */
   const [extendBy, setExtendBy] = useState<Record<string, number>>({})
   const simRunning = sim !== null && sim.shown < sim.steps.length
@@ -255,6 +263,12 @@ export function MyDungeons({
       setSim({ ...sim, shown: sim.shown + 1 })
     }, SIM_STEP_MS)
     return () => clearTimeout(t)
+  }, [sim])
+
+  // Save completed sim to persistent log
+  useEffect(() => {
+    if (!sim || sim.shown < sim.steps.length) return
+    setSimLogs((prev) => ({ ...prev, [sim.id]: sim }))
   }, [sim])
 
   // Leaving mid-simulation still settles the raids that were rolled.
@@ -478,7 +492,7 @@ export function MyDungeons({
                             disabled={simRunning}
                             onClick={() => setSim(planRaidSim(bp))}
                           >
-                            Simulate raids
+                            {simLogs[bp.id] ? 'Simulate again' : 'Simulate raids'}
                           </button>
                         )
                       )}
@@ -494,26 +508,38 @@ export function MyDungeons({
                     </div>
                   </div>
                 </article>
-                {sim?.id === bp.id && (
-                  <RaidSimPanel
-                    sim={sim}
-                    onClose={() => setSim(null)}
-                    onWatch={onWatchSim ? () => { setSim(null); onWatchSim(bp) } : undefined}
-                  />
-                )}
+                {(() => {
+                  const activeSim = sim?.id === bp.id ? sim : null
+                  const loggedSim = simLogs[bp.id]
+                  const shownSim = activeSim ?? loggedSim
+                  if (!shownSim) return null
+                  return (
+                    <RaidSimPanel
+                      sim={shownSim}
+                      onClose={() => setSim(null)}
+                      onWatch={onWatchSim ? () => { setSim(null); onWatchSim(bp) } : undefined}
+                    />
+                  )
+                })()}
                 </Fragment>
               )
             })}
             {finished.map((bp) => (
               <Fragment key={bp.id}>
                 <FinishedCard bp={bp} onView={() => setViewing(bp)} />
-                {sim?.id === bp.id && (
-                  <RaidSimPanel
-                    sim={sim}
-                    onClose={() => setSim(null)}
-                    onWatch={onWatchSim ? () => { setSim(null); onWatchSim(bp) } : undefined}
-                  />
-                )}
+                {(() => {
+                  const activeSim = sim?.id === bp.id ? sim : null
+                  const loggedSim = simLogs[bp.id]
+                  const shownSim = activeSim ?? loggedSim
+                  if (!shownSim) return null
+                  return (
+                    <RaidSimPanel
+                      sim={shownSim}
+                      onClose={() => setSim(null)}
+                      onWatch={onWatchSim ? () => { setSim(null); onWatchSim(bp) } : undefined}
+                    />
+                  )
+                })()}
               </Fragment>
             ))}
           </div>

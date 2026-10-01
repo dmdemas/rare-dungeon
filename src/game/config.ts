@@ -58,15 +58,14 @@ export const MOB_COUNT_WEIGHTS: { count: number; weight: number }[] = [
 ]
 
 /**
- * Hard-only mob spawn weights (lower mob density).
- * Cumulative: ≥1 100%, ≥2 30%, ≥3 15%, ≥4 2%.
- * Individual: 1→70, 2→15, 3→13, 4→2.
+ * Hard-only mob spawn weights — mainly 2–3 mobs; 4 is extremely rare (1%).
+ * Individual: 1→20%, 2→40%, 3→39%, 4→1%.
  */
 export const HARD_MOB_COUNT_WEIGHTS: { count: number; weight: number }[] = [
-  { count: 1, weight: 70 },
-  { count: 2, weight: 15 },
-  { count: 3, weight: 13 },
-  { count: 4, weight: 2 },
+  { count: 1, weight: 20 },
+  { count: 2, weight: 40 },
+  { count: 3, weight: 39 },
+  { count: 4, weight: 1 },
 ]
 
 /**

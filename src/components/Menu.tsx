@@ -457,6 +457,12 @@ function InfoOverlay({ kind, onClose }: { kind: 'how' | 'economy'; onClose: () =
             <p className="info-how-notice">
               📖 Don't miss the <strong>ECONOMY</strong> section — it explains how the game works and what the idea is all about.
             </p>
+            <p className="info-how-guide">
+              Watch video guide:{' '}
+              <a href="https://youtu.be/0Q_Jo0SqT8I" target="_blank" rel="noopener noreferrer">
+                https://youtu.be/0Q_Jo0SqT8I
+              </a>
+            </p>
             <p className="info-how-lead">First pick a mode: RAID or CREATE DUNGEON.</p>
             <div className="info-how-cols">
               <section className="info-how-col">

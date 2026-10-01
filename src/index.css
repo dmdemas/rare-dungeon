@@ -2833,6 +2833,23 @@ body {
   line-height: 1.5;
 }
 
+.info-how-guide {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.info-how-guide a {
+  color: #fff;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.info-how-guide a:hover {
+  color: #d4a832;
+}
+
 .info-how-lead {
   margin: 0 0 16px;
   font-size: 13px;

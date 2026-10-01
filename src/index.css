@@ -3275,6 +3275,73 @@ body {
   color: #dc503c;
 }
 
+/* Windowed raid: smaller, framed, centered over dark backdrop */
+.raid-screen--windowed {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.raid-screen--windowed .raid-stage {
+  width: min(80vw, calc(80vh * 980 / 560));
+  border: 2px solid #444;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* Sim panel last-3 summary cards */
+.raid-sim-last-label {
+  margin: 10px 0 6px;
+}
+
+.raid-sim-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.raid-sim-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #111;
+}
+
+.raid-sim-card--wiped {
+  border-color: rgba(220, 80, 60, 0.4);
+}
+
+.raid-sim-card--held {
+  border-color: var(--border);
+}
+
+.raid-sim-card-num {
+  font-family: var(--pixel);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.raid-sim-card-outcome {
+  flex: 1;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.raid-sim-card--wiped .raid-sim-card-outcome {
+  color: #e86868;
+}
+
+.raid-sim-summary {
+  margin: 4px 0 8px;
+  font-size: 13px;
+}
+
 /* Result card shown after each raid */
 .sim-watch-result-overlay {
   position: absolute;

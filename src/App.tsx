@@ -275,7 +275,7 @@ export default function App() {
 
   const onSimWatchRaidChange = useCallback((r: RaidState) => setSimWatchRaid(r), [])
 
-  /** Called when a sim-watch raid ends: show result card first. */
+  /** Called when a sim-watch raid ends: show result card. */
   const onSimWatchOutcome = useCallback(
     (result: 'won' | 'dead' | 'surrendered', floor: number) => {
       setScreen((prev) => {
@@ -288,20 +288,22 @@ export default function App() {
     [],
   )
 
-  /** Advance to the next sim-watch raid or return to My Dungeons. */
-  const advanceSimWatch = useCallback(() => {
+  /** Close sim-watch and return to My Dungeons. */
+  const closeSimWatch = useCallback(() => {
+    setSimWatchPending(null)
+    setActiveBlueprint(null)
+    setSimWatchRaid(null)
+    setScreen({ kind: 'myDungeons' })
+  }, [])
+
+  /** Watch another raid of the same dungeon. */
+  const watchAnotherSim = useCallback(() => {
     setSimWatchPending(null)
     setScreen((prev) => {
       if (prev.kind !== 'simWatch') return prev
-      const next = prev.raidIndex + 1
-      if (next > 5) {
-        setActiveBlueprint(null)
-        setSimWatchRaid(null)
-        return { kind: 'myDungeons' }
-      }
       const bp = prev.blueprint
       setSimWatchRaid(startRaid(bp))
-      return { kind: 'simWatch', blueprint: bp, raidIndex: next, results: prev.results }
+      return { kind: 'simWatch', blueprint: bp, raidIndex: prev.raidIndex + 1, results: prev.results }
     })
   }, [])
 
@@ -845,29 +847,8 @@ export default function App() {
       )}
 
       {screen.kind === 'simWatch' && activeBlueprint && simWatchRaid && (
-        <div className="sim-watch-screen">
-          {/* HUD: exit + counter + pip history */}
-          <div className="sim-watch-hud">
-            <button
-              type="button"
-              className="ghost sim-watch-back"
-              onClick={() => { setActiveBlueprint(null); setSimWatchRaid(null); setSimWatchPending(null); setScreen({ kind: 'myDungeons' }) }}
-            >
-              ← Back
-            </button>
-            <span className="sim-watch-counter">
-              Raid {screen.raidIndex} / 5 — {activeBlueprint.name}
-            </span>
-            <div className="sim-watch-results">
-              {screen.results.map((r) => (
-                <span key={r.index} className={`sim-watch-pip ${r.won ? 'sim-watch-pip--won' : 'sim-watch-pip--lost'}`}>
-                  {r.won ? '✓' : `✗F${r.floor}`}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Full raid visual — character moves and bot picks perks */}
+        <>
+          {/* Windowed RaidView — bot auto-picks perks, character moves */}
           <RaidView
             key={screen.raidIndex}
             raid={simWatchRaid}
@@ -875,9 +856,10 @@ export default function App() {
             onRaidChange={onSimWatchRaidChange}
             onOutcome={onSimWatchOutcome}
             botMode
+            windowed
           />
 
-          {/* Result card shown after each raid ends */}
+          {/* Result card shown after raid ends */}
           {simWatchPending && (
             <div className="sim-watch-result-overlay">
               <div className="card sim-watch-result-card">
@@ -889,17 +871,18 @@ export default function App() {
                     ? 'The raider cleared all floors and robbed the dungeon.'
                     : `The raider died on floor ${simWatchPending.floor} — entry stays in the bank.`}
                 </p>
-                <button
-                  type="button"
-                  className="connect"
-                  onClick={advanceSimWatch}
-                >
-                  {screen.raidIndex >= 5 ? 'Done →' : `Next raid (${screen.raidIndex + 1} / 5) →`}
-                </button>
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <button type="button" className="ghost" onClick={closeSimWatch}>
+                    ← Back
+                  </button>
+                  <button type="button" className="connect" onClick={watchAnotherSim}>
+                    ▶ Watch another raid
+                  </button>
+                </div>
               </div>
             </div>
           )}
-        </div>
+        </>
       )}
 
       {screen.kind === 'outcome' && (

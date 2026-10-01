@@ -48,6 +48,8 @@ type Props = {
   } | null
   /** Bot mode: AI auto-picks perks — used for simulation watch. */
   botMode?: boolean
+  /** Windowed mode: raid renders in a smaller framed box, not fullscreen. */
+  windowed?: boolean
 }
 
 export function RaidView({
@@ -59,6 +61,7 @@ export function RaidView({
   onOutcome,
   offerReroll = null,
   botMode = false,
+  windowed = false,
 }: Props) {
   const isGridDemo = !!blueprint.isGridDemo
   const pitCliffStyle = blueprint.pitCliffStyle ?? 4
@@ -642,7 +645,7 @@ export function RaidView({
     entryPaid && entryPaid > 0 ? entryPaid : (blueprint.tier ?? 'soft') === 'hard' ? HARD.entryCost : SOFT.entryCost
 
   return (
-    <div className="screen raid-screen">
+    <div className={`screen raid-screen${windowed ? ' raid-screen--windowed' : ''}`}>
       <div className="raid-stage">
         <header className="raid-hud">
           <div className="speed-controls">

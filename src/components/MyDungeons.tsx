@@ -61,7 +61,7 @@ function perksFromBlueprint(bp: DungeonBlueprint): SidePerkState<DungeonPerkId> 
   }
 }
 
-const SIM_MAX_RAIDS = 8
+const SIM_MAX_RAIDS = 20
 const SIM_STEP_MS = 450
 /** A dungeon's stop point can never go past this many survived raids. */
 const MAX_RAIDS = 25
@@ -108,7 +108,8 @@ type RaidSim = {
 function planRaidSim(bp: DungeonBlueprint): RaidSim {
   const rng = mulberry32((Math.random() * 0x100000000) >>> 0)
   const toPlan = bp.closeAtWins != null ? bp.closeAtWins - (bp.wins ?? 0) : 0
-  const planned = toPlan > 0 ? toPlan : 1 + Math.floor(rng() * SIM_MAX_RAIDS)
+  // Run until wipe or SIM_MAX_RAIDS so we can show the dungeon's full lifespan
+  const planned = toPlan > 0 ? toPlan : SIM_MAX_RAIDS
   const steps: RaidStep[] = []
   let end: RaidSim['end']
   let cur = bp
@@ -152,40 +153,75 @@ function RaidSimPanel({
 }) {
   const done = sim.shown >= sim.steps.length
   const wiped = sim.steps[sim.steps.length - 1]?.wiped ?? false
+
+  // Last 3 raids to show as cards when done
+  const last3 = sim.steps.slice(-3)
+  const last3Start = Math.max(0, sim.steps.length - 3)
+
   return (
     <section className="card raid-sim">
       <h2 className="section-title">
-        SIMULATION LOG — {sim.name}: {sim.planned} {sim.planned === 1 ? 'raid' : 'raids'}
+        SIMULATION — {sim.name}
       </h2>
-      <ul className="raid-sim-log">
-        {sim.steps.slice(0, sim.shown).map((s, i) => (
-          <li key={i} className={`raid-sim-entry ${s.wiped ? 'raid-sim-wiped' : 'raid-sim-held'}`}>
-            <span>
-              <PixelIcon name={s.wiped ? 'friend' : 'skull'} size={12} /> {raidLine(s, i)}
-            </span>
-            {done && onWatch && (
-              <button type="button" className="ghost raid-sim-watch-btn" onClick={onWatch}>
-                ▶ Watch
-              </button>
-            )}
-          </li>
-        ))}
-        {!done && <li className="muted">Raid {sim.shown + 1} in progress…</li>}
-      </ul>
+
+      {/* Running progress */}
+      {!done && (
+        <ul className="raid-sim-log">
+          {sim.steps.slice(0, sim.shown).map((s, i) => (
+            <li key={i} className={`raid-sim-entry ${s.wiped ? 'raid-sim-wiped' : 'raid-sim-held'}`}>
+              <span>
+                <PixelIcon name={s.wiped ? 'friend' : 'skull'} size={12} /> {raidLine(s, i)}
+              </span>
+            </li>
+          ))}
+          <li className="muted">Raid {sim.shown + 1} in progress…</li>
+        </ul>
+      )}
+
+      {/* Summary + last 3 selectable cards when done */}
       {done && (
-        <p className={wiped ? 'raid-sim-wiped' : 'muted'}>
-          {wiped
-            ? `Dungeon robbed. The $${sim.invested.toFixed(2)} you invested is lost.`
-            : sim.end === 'autoClose'
-              ? `Planned level ${sim.steps[sim.steps.length - 1]?.winsAfter ?? 0} reached — the dungeon is paused. Claim it or extend it.`
-              : sim.end === 'claimed'
-                ? `You claimed the bank after ${sim.steps.length} raids — dungeon closed.`
-                : `The dungeon held ${sim.steps.length} raids.`}
-          {' '}
-          <button type="button" className="ghost" onClick={onClose}>
-            OK
-          </button>
-        </p>
+        <>
+          <p className={`raid-sim-summary ${wiped ? 'raid-sim-wiped' : 'muted'}`}>
+            {wiped
+              ? `Robbed at raid ${sim.steps.length} — dungeon lost.`
+              : sim.end === 'autoClose'
+                ? `Planned stop at raid ${sim.steps[sim.steps.length - 1]?.winsAfter ?? 0} reached.`
+                : sim.end === 'claimed'
+                  ? `Claimed after ${sim.steps.length} raids.`
+                  : `Held all ${sim.steps.length} raids — dungeon survived.`}
+            {' · '}
+            <button type="button" className="ghost" onClick={onClose}>Close</button>
+          </p>
+
+          {sim.steps.length >= 1 && (
+            <>
+              <p className="card-label raid-sim-last-label">
+                LAST {Math.min(3, sim.steps.length)} RAIDS — click ▶ Watch to see it live
+              </p>
+              <div className="raid-sim-cards">
+                {last3.map((s, idx) => {
+                  const raidNum = last3Start + idx + 1
+                  return (
+                    <div key={idx} className={`raid-sim-card ${s.wiped ? 'raid-sim-card--wiped' : 'raid-sim-card--held'}`}>
+                      <div className="raid-sim-card-num">Raid {raidNum}</div>
+                      <div className="raid-sim-card-outcome">
+                        <PixelIcon name={s.wiped ? 'friend' : 'skull'} size={14} />
+                        {s.wiped
+                          ? ' CLEARED — raider won'
+                          : ` died floor ${s.floor} · bank $${s.bankAfter.toFixed(2)}`}
+                      </div>
+                      {onWatch && (
+                        <button type="button" className="ghost raid-sim-watch-btn" onClick={onWatch}>
+                          ▶ Watch
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </>
       )}
     </section>
   )

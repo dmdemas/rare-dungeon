@@ -298,16 +298,6 @@ export default function App() {
     setScreen({ kind: 'myDungeons' })
   }, [])
 
-  /** Watch another raid of the same dungeon. */
-  const watchAnotherSim = useCallback(() => {
-    setSimWatchPending(null)
-    setScreen((prev) => {
-      if (prev.kind !== 'simWatch') return prev
-      const bp = prev.blueprint
-      setSimWatchRaid(startRaid(bp))
-      return { kind: 'simWatch', blueprint: bp, raidIndex: prev.raidIndex + 1, results: prev.results }
-    })
-  }, [])
 
   const pickCreated = (bp: DungeonBlueprint) => {
     const tier = bp.tier ?? pendingTier
@@ -878,14 +868,9 @@ export default function App() {
                     ? 'The raider cleared all floors and robbed the dungeon.'
                     : `The raider died on floor ${simWatchPending.floor} — entry stays in the bank.`}
                 </p>
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button type="button" className="ghost" onClick={closeSimWatch}>
-                    ← Back
-                  </button>
-                  <button type="button" className="connect" onClick={watchAnotherSim}>
-                    ▶ Watch another raid
-                  </button>
-                </div>
+                <button type="button" className="ghost" onClick={closeSimWatch}>
+                  ← Back
+                </button>
               </div>
             </div>
           )}

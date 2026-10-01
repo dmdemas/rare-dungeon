@@ -674,9 +674,19 @@ export function RaidView({
               </button>
             ))}
             {windowed ? (
-              <button type="button" className="ghost" onClick={onBack}>
-                ← Back (Esc)
-              </button>
+              <>
+                <button type="button" className="ghost" onClick={onBack}>
+                  ← Back
+                </button>
+                <button
+                  type="button"
+                  className={`skip-btn${skipping ? ' active' : ''}`}
+                  disabled={skipping}
+                  onClick={() => setSpeed(SKIP)}
+                >
+                  {skipping ? 'SKIPPING…' : 'SKIP »'}
+                </button>
+              </>
             ) : isGridDemo ? (
               <button type="button" className="ghost" onClick={() => onOutcome('surrendered', raid.floor)}>
                 Back (Esc)

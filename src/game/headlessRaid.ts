@@ -15,6 +15,8 @@ import {
   type PerkOffer,
   type PlannedDungeonLoadout,
 } from './perks'
+import { hardSimFloorStamina } from './economy'
+import { friendMaxStamina } from './perks/effects'
 import { advanceFloor, startRaid, tickRaid } from './raid'
 import type { Rng } from './rng'
 import type { DungeonBlueprint } from './types'
@@ -67,6 +69,8 @@ export function simulateRaid(
   friendRerolls = 0,
   /** Extra stamina granted at start of floors 2 and 3 (Hard sim buff). */
   extraStaFloor23 = 0,
+  /** When true, use HARD_SIM_FLOOR_STAMINA (20/18/16) instead of real-play values (20/17/13). */
+  useSimStamina = false,
 ): HeadlessRaidResult {
   let perks = createEmptyPerksState()
   let raid = startRaid(bp, 1)
@@ -101,6 +105,12 @@ export function simulateRaid(
     if (raid.phase !== 'floorClear') return { won: false, floor, rerollsUsed, friendPickSequence, raidSeed }
     if (floor >= FLOORS) return { won: true, floor, rerollsUsed, friendPickSequence, raidSeed }
     raid = advanceFloor(raid, bp)
+    // Override floor stamina for preview simulation
+    if (useSimStamina && raid.floorBaseStamina !== undefined) {
+      const base = hardSimFloorStamina(raid.floor)
+      raid.floorBaseStamina = base
+      raid.friend.stamina = friendMaxStamina(raid.perkMods, base)
+    }
   }
   return { won: false, floor: FLOORS, rerollsUsed, friendPickSequence, raidSeed }
 }

@@ -550,6 +550,23 @@ export function MyDungeons({
             {finished.map((bp) => (
               <Fragment key={bp.id}>
                 <FinishedCard bp={bp} onView={() => setViewing(bp)} />
+                {!sim || sim.id !== bp.id ? (
+                  (!simLogs[bp.id] || hiddenLogs.has(bp.id)) && (
+                    <div className="finished-sim-row">
+                      <button
+                        type="button"
+                        className="ghost"
+                        disabled={simRunning}
+                        onClick={() => {
+                          setHiddenLogs((s) => { const n = new Set(s); n.delete(bp.id); return n })
+                          setSim(planRaidSim(bp))
+                        }}
+                      >
+                        {simLogs[bp.id] ? 'Simulate again' : 'Simulate raids'}
+                      </button>
+                    </div>
+                  )
+                ) : null}
                 {renderSimPanel(bp)}
               </Fragment>
             ))}

@@ -3479,6 +3479,10 @@ body {
   margin-bottom: 18px;
 }
 
+.finished-sim-row {
+  padding: 6px 0 2px;
+}
+
 /* Finished: map and text dimmed to dark grey; only the frozen profit / loss keeps its color. */
 .owned-card--finished {
   background: #0d0d0d;

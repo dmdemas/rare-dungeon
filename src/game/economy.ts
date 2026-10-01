@@ -99,6 +99,17 @@ export const HARD = {
  */
 export const HARD_FLOOR_STAMINA = [0, 20, 17, 13] as const
 
+/**
+ * Stamina used for the headless "Simulate raids" preview (slightly easier than real play).
+ * F1: 20  F2: 18  F3: 16
+ */
+export const HARD_SIM_FLOOR_STAMINA = [0, 20, 18, 16] as const
+
+export function hardSimFloorStamina(floor: number): number {
+  const f = Math.min(3, Math.max(1, Math.floor(floor)))
+  return HARD_SIM_FLOOR_STAMINA[f]!
+}
+
 export function hardFloorStamina(floor: number): number {
   const f = Math.min(3, Math.max(1, Math.floor(floor)))
   return HARD_FLOOR_STAMINA[f]!

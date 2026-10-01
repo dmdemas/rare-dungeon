@@ -138,7 +138,7 @@ export function runEconomyRaid(bp: DungeonBlueprint, rng: Rng): RaidStep {
   const rerollBudget = raiderRerolls(tier, raider, rng)
   const bank = (bp.bank ?? cfg.createToBank) + quote.toBank
   const wins = bp.wins ?? 0
-  const result = simulateRaid(bp, dungeonLoadoutFor(bp, rng), rng, rerollBudget)
+  const result = simulateRaid(bp, dungeonLoadoutFor(bp, rng), rng, rerollBudget, 0, tier === 'hard')
   const rerolls$ = rerollCostSum(result.rerollsUsed)
 
   if (result.won) {

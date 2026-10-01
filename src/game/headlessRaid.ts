@@ -37,6 +37,8 @@ export type HeadlessRaidResult = {
   floor: number
   /** Friend-offer rerolls actually spent (≤ the budget passed in). */
   rerollsUsed: number
+  /** Friend perks picked per floor (index 0 = floor 1). Used to replay the raid visually. */
+  friendPickSequence: FriendPerkId[]
 }
 
 const offerValue = (id: FriendPerkId) => FRIEND_PICK_VALUE[id] ?? 0
@@ -67,6 +69,7 @@ export function simulateRaid(
   let perks = createEmptyPerksState()
   let raid = startRaid(bp, 1)
   let rerollsUsed = 0
+  const friendPickSequence: FriendPerkId[] = []
   for (let floor = 1; floor <= FLOORS; floor++) {
     let offer = rollFriendOffer(perks, rng)
     while (
@@ -77,7 +80,11 @@ export function simulateRaid(
       rerollsUsed++
       offer = rollFriendOffer(perks, rng)
     }
-    if (offer) perks = selectFriendPerk(perks, botFriendPick(offer))
+    if (offer) {
+      const picked = botFriendPick(offer)
+      friendPickSequence.push(picked)
+      perks = selectFriendPerk(perks, picked)
+    }
     perks = { ...perks, dungeon: revealDungeonPick(perks.dungeon, plan, floor - 1) }
     raid = syncRaidWithPerks(raid, perks)
     // Hard sim buff: extra stamina on floors 2 and 3
@@ -87,10 +94,10 @@ export function simulateRaid(
 
     let ticks = 0
     while (raid.phase === 'running' && ticks++ < MAX_TICKS) raid = tickRaid(raid)
-    if (raid.phase === 'won') return { won: true, floor, rerollsUsed }
-    if (raid.phase !== 'floorClear') return { won: false, floor, rerollsUsed }
-    if (floor >= FLOORS) return { won: true, floor, rerollsUsed }
+    if (raid.phase === 'won') return { won: true, floor, rerollsUsed, friendPickSequence }
+    if (raid.phase !== 'floorClear') return { won: false, floor, rerollsUsed, friendPickSequence }
+    if (floor >= FLOORS) return { won: true, floor, rerollsUsed, friendPickSequence }
     raid = advanceFloor(raid, bp)
   }
-  return { won: false, floor: FLOORS, rerollsUsed }
+  return { won: false, floor: FLOORS, rerollsUsed, friendPickSequence }
 }

@@ -52,6 +52,8 @@ type Props = {
   windowed?: boolean
   /** Called when user clicks Back or presses Esc in windowed mode. */
   onBack?: () => void
+  /** If provided, bot picks these perks in order (floor 0→1→2) instead of random offers. Guarantees replay fidelity. */
+  forcedPerkSequence?: import('../game/perks').FriendPerkId[]
 }
 
 export function RaidView({
@@ -65,6 +67,7 @@ export function RaidView({
   botMode = false,
   windowed = false,
   onBack,
+  forcedPerkSequence,
 }: Props) {
   const isGridDemo = !!blueprint.isGridDemo
   const pitCliffStyle = blueprint.pitCliffStyle ?? 4
@@ -346,18 +349,22 @@ export function RaidView({
     }
   }, [raid.dungeonId, raid.floor, isGridDemo])
 
-  // Bot mode: auto-pick a perk when the offer arrives
+  // Bot mode: auto-pick a perk when the offer arrives.
+  // If forcedPerkSequence is provided, use the stored pick for this floor to guarantee replay fidelity.
   useEffect(() => {
-    if (!botMode || !friendOffer || clock !== 'perks') return
-    // friendOffer is [id1, id2] — pick the first offered perk
-    const picked = friendOffer[0]
+    if (!botMode || clock !== 'perks') return
+    const floorIdx = Math.min(2, Math.max(0, raid.floor - 1))
+    const forced = forcedPerkSequence?.[floorIdx]
+    // With forced sequence, pick immediately (no offer needed to determine choice)
+    // Without forced sequence, fall back to random offer's first perk
+    const picked = forced ?? friendOffer?.[0]
     if (!picked) return
     const delay = skipping ? 150 : 900
     const t = window.setTimeout(() => onPickFriend(picked), delay)
     return () => window.clearTimeout(t)
   // onPickFriend is defined below but stable within render — safe to omit from deps
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [botMode, friendOffer, clock, skipping])
+  }, [botMode, forcedPerkSequence, friendOffer, clock, skipping, raid.floor])
 
   const onPickFriend = (id: FriendPerkId) => {
     setFriendOffer(null)

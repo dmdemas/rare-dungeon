@@ -49,7 +49,7 @@ type Props = {
   liveSoft: number
   liveHard: number
   /** Open visual bot-mode simulation for this dungeon. */
-  onWatchSim?: (bp: DungeonBlueprint) => void
+  onWatchSim?: (bp: DungeonBlueprint, friendPickSequence?: string[]) => void
 }
 
 function perksFromBlueprint(bp: DungeonBlueprint): SidePerkState<DungeonPerkId> {
@@ -149,7 +149,7 @@ function RaidSimPanel({
 }: {
   sim: RaidSim
   onClose: () => void
-  onWatch?: () => void
+  onWatch?: (step: RaidStep) => void
 }) {
   const done = sim.shown >= sim.steps.length
   const wiped = sim.steps[sim.steps.length - 1]?.wiped ?? false
@@ -211,7 +211,7 @@ function RaidSimPanel({
                           : ` died floor ${s.floor} · bank $${s.bankAfter.toFixed(2)}`}
                       </div>
                       {onWatch && (
-                        <button type="button" className="ghost raid-sim-watch-btn" onClick={onWatch}>
+                        <button type="button" className="ghost raid-sim-watch-btn" onClick={() => onWatch(s)}>
                           ▶ Watch
                         </button>
                       )}
@@ -302,6 +302,10 @@ export function MyDungeons({
   /** Show sim panel for a dungeon: active sim takes priority, then logged (if not hidden). */
   const renderSimPanel = (bp: DungeonBlueprint) => {
     const isActive = sim?.id === bp.id
+    const makeWatchHandler = (_sim: RaidSim) =>
+      onWatchSim
+        ? (step: RaidStep) => onWatchSim(bp, step.friendPickSequence as string[])
+        : undefined
     if (isActive) {
       return (
         <RaidSimPanel
@@ -310,7 +314,7 @@ export function MyDungeons({
             setSim(null)
             setHiddenLogs((s) => new Set([...s, bp.id]))
           }}
-          onWatch={onWatchSim ? () => onWatchSim(bp) : undefined}
+          onWatch={makeWatchHandler(sim!)}
         />
       )
     }
@@ -320,7 +324,7 @@ export function MyDungeons({
       <RaidSimPanel
         sim={logged}
         onClose={() => setHiddenLogs((s) => new Set([...s, bp.id]))}
-        onWatch={onWatchSim ? () => onWatchSim(bp) : undefined}
+        onWatch={makeWatchHandler(logged)}
       />
     )
   }

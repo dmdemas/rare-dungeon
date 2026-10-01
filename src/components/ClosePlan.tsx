@@ -83,8 +83,8 @@ export function ClosePlan({
             className={`close-plan-bar close-plan-bar--manual${value == null ? ' is-sel' : ''}`}
             onClick={() => onChange(null)}
           >
-            <span className="close-plan-col close-plan-col--manual">NO STOP</span>
-            <span className="close-plan-w">MANUAL</span>
+            <span className="close-plan-col close-plan-col--manual">MAX</span>
+            <span className="close-plan-w">25</span>
           </button>
         </div>
 
@@ -101,7 +101,7 @@ export function ClosePlan({
           />
         ) : (
           <p className="card-sub close-plan-manual">
-            No stop point: the dungeon stays live until you claim it in My Dungeons or a raider clears it.
+            Up to 25 raids — no automatic stop. The dungeon stays live until you claim it in My Dungeons or a raider clears it.
           </p>
         )}
       </div>

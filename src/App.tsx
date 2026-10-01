@@ -719,6 +719,7 @@ export default function App() {
           nextTickAt={nextTickAt}
           lastPoolAdd={lastPoolAdd}
           playerTickets={ownedTicketPower + raiderTicketPower}
+          ticketUsd={ticketUsd}
           weekday={weekNumber === 1 ? START_WEEKDAY : 0}
           baselineDaily={START_BASELINE_DAILY}
           poolCents={world.snapshot.poolCents}

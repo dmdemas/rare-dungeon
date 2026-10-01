@@ -35,6 +35,8 @@ type Props = {
   lastPoolAdd: number
   playerTickets: number
   aiTickets: number
+  /** $ value of playerTickets if week ended now. */
+  ticketUsd: (tickets: number) => number
   /** Current weekday, 0 = Monday. */
   weekday: number
   /** Typical daily inflow of past weeks (level of past / projected bars). */
@@ -99,7 +101,12 @@ export function Menu(props: Props) {
             <PixelIcon name="ticket" size={16} />
             <div>
               <span className="wallet-chip-label">MY TICKETS · WEEK {props.weekNumber}</span>
-              <strong>{tix(props.playerTickets)}</strong>
+              <strong>
+                {tix(props.playerTickets)}
+                {props.playerTickets > 0 && (
+                  <span className="wallet-chip-usd"> ≈{money(props.ticketUsd(props.playerTickets), 2)}</span>
+                )}
+              </strong>
             </div>
           </div>
           <button type="button" className="connect" onClick={() => setInfo('deposit')} title="Deposit funds">

@@ -1767,6 +1767,16 @@ body {
 .wallet-chip strong {
   font-size: 15px;
   font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.wallet-chip-usd {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 400;
 }
 
 /* Wallet balance flash: green glow from bottom to top when popup with kind=win disappears */

@@ -411,7 +411,7 @@ export function MyDungeons({
                         raidsKey="LEVEL OF DUNGEON"
                         raidsHint={LEVEL_HINT}
                         raids={wins}
-                        raidsSub={bp.closeAtWins != null ? `stops after ${bp.closeAtWins}` : 'no stop point'}
+                        raidsSub={bp.closeAtWins != null ? `stops after ${bp.closeAtWins}` : 'up to 25 raids'}
                         tickets={tickets}
                         ticketsUsd={ticketUsd(tickets)}
                       />

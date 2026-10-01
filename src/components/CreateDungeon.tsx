@@ -43,7 +43,7 @@ type Props = {
   } | null
 }
 
-export function CreateDungeon({ options, createCost, onPay, onPick, onBack, ticketUsd, offerReroll = null }: Props) {
+export function CreateDungeon({ options, createCost, onPay: _onPay, onPick, onBack, ticketUsd, offerReroll = null }: Props) {
   const tier: DungeonTier = options[0]?.tier ?? 'soft'
   const [selected, setSelected] = useState<DungeonBlueprint | null>(null)
   const [dungeonPerks, setDungeonPerks] = useState<SidePerkState<DungeonPerkId>>(() =>
@@ -55,6 +55,8 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
   const [closeAt, setCloseAt] = useState<number | null>(() => defaultCloseAt(tier))
   /** Esc while setting up a paid dungeon asks first. */
   const [confirmLeave, setConfirmLeave] = useState(false)
+  /** Confirm before leaving Screen 1 (fee already paid upfront). */
+  const [confirmLeaveEarly, setConfirmLeaveEarly] = useState(false)
   /** Sticky preview — pits/horde accumulate; never re-roll prior pits. */
   const [previewRaid, setPreviewRaid] = useState<RaidState | null>(null)
 
@@ -62,7 +64,6 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
   const slotsFull = nextSlotIndex(dungeonPerks.slots) < 0
 
   const selectBlueprint = (bp: DungeonBlueprint) => {
-    if (!onPay()) return
     setSelected(bp)
     setDungeonPerks(createEmptySideState())
     setPerkRound(1)
@@ -116,6 +117,11 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (confirmLeaveEarly) {
+        if (e.key === 'Escape') { e.preventDefault(); setConfirmLeaveEarly(false) }
+        else if (e.key === 'Enter') { e.preventDefault(); onBack() }
+        return
+      }
       if (confirmLeave) {
         if (e.key === 'Escape') {
           e.preventDefault()
@@ -134,13 +140,13 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
       if (e.key === 'Escape') {
         e.preventDefault()
         if (selected) setConfirmLeave(true)
-        else onBack()
+        else setConfirmLeaveEarly(true)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, slotsFull, onPick, onBack, dungeonPerks, previewRaid, closeAt, confirmLeave])
+  }, [selected, slotsFull, onPick, onBack, dungeonPerks, previewRaid, closeAt, confirmLeave, confirmLeaveEarly])
 
   const onPickPerk = (id: DungeonPerkId) => {
     if (!previewRaid) return
@@ -248,7 +254,7 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
   return (
     <div className="screen create-screen create-pick">
       <header className="screen-header">
-        <button type="button" className="ghost" onClick={onBack}>
+        <button type="button" className="ghost" onClick={() => setConfirmLeaveEarly(true)}>
           ← Back
         </button>
         <h1>
@@ -256,7 +262,7 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
           <span className={`tier-chip tier-chip--${tier} tier-chip--lg`}>{tier === 'hard' ? 'hard' : 'simple'}</span>
         </h1>
         <p className="muted">
-          Pick a layout — this pays the {money(createCost)} create fee — then choose 3 dungeon perks.
+          Pick a layout — fee {money(createCost)} already paid — then choose 3 dungeon perks.
         </p>
       </header>
       <div className="preview-row">
@@ -270,6 +276,25 @@ export function CreateDungeon({ options, createCost, onPay, onPick, onBack, tick
           />
         ))}
       </div>
+
+      {confirmLeaveEarly && (
+        <div className="create-leave create-leave--fixed" role="alertdialog" aria-label="Leave dungeon creation" onClick={() => setConfirmLeaveEarly(false)}>
+          <div className="card create-leave-card" onClick={(e) => e.stopPropagation()}>
+            <div className="action-title">LEAVE DUNGEON CREATION?</div>
+            <p className="card-sub">
+              The {money(createCost)} create fee has already been paid and won't be refunded.
+            </p>
+            <div className="create-leave-actions">
+              <button type="button" className="ghost" onClick={() => setConfirmLeaveEarly(false)}>
+                STAY · ESC
+              </button>
+              <button type="button" className="ghost create-leave-go" onClick={onBack}>
+                LEAVE (−{money(createCost)}) · ENTER
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

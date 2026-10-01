@@ -40,7 +40,7 @@ import {
 } from './game/economy'
 import { pickCreatePair } from './game/poolGen'
 import { startRaid } from './game/raid'
-import type { DungeonBlueprint, RaidState, Screen } from './game/types'
+import type { DungeonBlueprint, RaidState, Screen, SimWatchResult } from './game/types'
 import {
   WORLD_STEP_MS,
   feedEvent,
@@ -239,11 +239,15 @@ export default function App() {
       setLastError('Max 3 live dungeons.')
       return
     }
-    const cost = tier === 'hard' ? HARD.createCost : SOFT.createCost
-    if (wallet.balance < cost) {
+    // Fee is charged immediately when entering create mode
+    const settled = tier === 'hard' ? settleHardCreate(wallet, 0) : settleSoftCreate(wallet)
+    if (!settled) {
+      const cost = tier === 'hard' ? HARD.createCost : SOFT.createCost
       setLastError(`Need $${cost} to create ${tier}.`)
       return
     }
+    setWallet(settled.wallet)
+    setCreatePaid({ bank: settled.bank, invested: settled.invested })
     setPendingTier(tier)
     const [a, b] = pickCreatePair(tier)
     const wrap = tier === 'hard' ? asHardDungeon : asSoftDungeon
@@ -253,19 +257,34 @@ export default function App() {
     })
   }
 
-  /** Create fee is charged when a layout is picked; leaving perk picking does not refund it. */
-  const payCreate = (): boolean => {
-    const settled = pendingTier === 'hard' ? settleHardCreate(wallet, 0) : settleSoftCreate(wallet)
-    if (!settled) {
-      const cost = pendingTier === 'hard' ? HARD.createCost : SOFT.createCost
-      setLastError(`Need $${cost} to create ${pendingTier}.`)
-      setScreen({ kind: 'menu' })
-      return false
-    }
-    setWallet(settled.wallet)
-    setCreatePaid({ bank: settled.bank, invested: settled.invested })
-    return true
+  /** No-op — fee is now charged upfront in openCreate. */
+  const payCreate = (): boolean => true
+
+  /** Open bot-mode visual simulation for an owned dungeon. */
+  const startSimWatch = (bp: DungeonBlueprint) => {
+    setActiveBlueprint(bp)
+    setScreen({ kind: 'simWatch', blueprint: bp, raidIndex: 1, results: [] })
   }
+
+  /** Called when a sim-watch raid ends; advances to the next or returns to My Dungeons. */
+  const onSimWatchOutcome = useCallback(
+    (result: 'won' | 'dead' | 'surrendered', floor: number) => {
+      setScreen((prev) => {
+        if (prev.kind !== 'simWatch') return prev
+        const entry: SimWatchResult = { index: prev.raidIndex, won: result === 'won', floor }
+        const results = [...prev.results, entry]
+        const next = prev.raidIndex + 1
+        if (next > 5) {
+          // Done — back to My Dungeons
+          setActiveBlueprint(null)
+          return { kind: 'myDungeons' }
+        }
+        // Start next raid by refreshing the raid state through activeBlueprint
+        return { kind: 'simWatch', blueprint: prev.blueprint, raidIndex: next, results }
+      })
+    },
+    [],
+  )
 
   const pickCreated = (bp: DungeonBlueprint) => {
     const tier = bp.tier ?? pendingTier
@@ -750,6 +769,7 @@ export default function App() {
           hardEntryQuote={hardEntryQuote}
           liveSoft={liveSoft}
           liveHard={liveHard}
+          onWatchSim={startSimWatch}
           suggestClose={(bp) => {
             const tier = bp.tier ?? 'soft'
             if (tier === 'hard') {
@@ -802,6 +822,34 @@ export default function App() {
               : null
           }
         />
+      )}
+
+      {screen.kind === 'simWatch' && activeBlueprint && (
+        <div className="sim-watch-screen">
+          <div className="sim-watch-hud">
+            <button type="button" className="ghost sim-watch-back" onClick={() => { setActiveBlueprint(null); setScreen({ kind: 'myDungeons' }) }}>
+              ✕ Exit
+            </button>
+            <span className="sim-watch-counter">
+              Raid {screen.raidIndex} / 5 — {activeBlueprint.name}
+            </span>
+            <div className="sim-watch-results">
+              {screen.results.map((r) => (
+                <span key={r.index} className={`sim-watch-pip ${r.won ? 'sim-watch-pip--won' : 'sim-watch-pip--lost'}`}>
+                  {r.won ? '✓' : `✗F${r.floor}`}
+                </span>
+              ))}
+            </div>
+          </div>
+          <RaidView
+            key={screen.raidIndex}
+            raid={startRaid(activeBlueprint)}
+            blueprint={activeBlueprint}
+            onRaidChange={() => {}}
+            onOutcome={onSimWatchOutcome}
+            botMode
+          />
+        </div>
       )}
 
       {screen.kind === 'outcome' && (

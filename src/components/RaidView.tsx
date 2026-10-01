@@ -46,6 +46,8 @@ type Props = {
     nextCost: (already: number) => number
     tryPay: (already: number) => boolean
   } | null
+  /** Bot mode: AI auto-picks perks — used for simulation watch. */
+  botMode?: boolean
 }
 
 export function RaidView({
@@ -56,6 +58,7 @@ export function RaidView({
   onRaidChange,
   onOutcome,
   offerReroll = null,
+  botMode = false,
 }: Props) {
   const isGridDemo = !!blueprint.isGridDemo
   const pitCliffStyle = blueprint.pitCliffStyle ?? 4
@@ -329,6 +332,19 @@ export function RaidView({
       }
     }
   }, [raid.dungeonId, raid.floor, isGridDemo])
+
+  // Bot mode: auto-pick a perk when the offer arrives
+  useEffect(() => {
+    if (!botMode || !friendOffer || clock !== 'perks') return
+    // friendOffer is [id1, id2] — pick the first offered perk
+    const picked = friendOffer[0]
+    if (!picked) return
+    const delay = skipping ? 150 : 900
+    const t = window.setTimeout(() => onPickFriend(picked), delay)
+    return () => window.clearTimeout(t)
+  // onPickFriend is defined below but stable within render — safe to omit from deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [botMode, friendOffer, clock, skipping])
 
   const onPickFriend = (id: FriendPerkId) => {
     setFriendOffer(null)

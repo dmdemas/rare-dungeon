@@ -1510,6 +1510,9 @@ button.stub {
 .raid-sim-log {
   list-style: none;
   margin: 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   padding: 0;
   font-size: 13px;
   line-height: 1.6;
@@ -3169,6 +3172,100 @@ body {
   flex-wrap: wrap;
 }
 
+.raid-sim-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 0;
+}
+
+.raid-sim-entry > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.raid-sim-watch-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.raid-sim-watch-btn:hover {
+  opacity: 1;
+}
+
+/* Sim confirm card */
+.sim-confirm-card {
+  max-width: 420px;
+}
+
+.sim-confirm-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Sim watch screen */
+.sim-watch-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  background: #000;
+}
+
+.sim-watch-hud {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.sim-watch-back {
+  pointer-events: auto;
+  background: rgba(0,0,0,0.7);
+  padding: 4px 10px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.sim-watch-counter {
+  font-family: var(--pixel);
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+}
+
+.sim-watch-results {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  pointer-events: none;
+}
+
+.sim-watch-pip {
+  font-family: var(--pixel);
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.sim-watch-pip--won {
+  background: rgba(60,220,80,0.25);
+  color: #3cdc50;
+}
+
+.sim-watch-pip--lost {
+  background: rgba(220,80,60,0.2);
+  color: #dc503c;
+}
+
+/* Legacy — keep for backward compat */
 .raid-sim-log li {
   display: flex;
   gap: 8px;

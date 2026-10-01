@@ -188,11 +188,18 @@ export type RaidState = {
   }
 }
 
+export type SimWatchResult = {
+  index: number
+  won: boolean
+  floor: number
+}
+
 export type Screen =
   | { kind: 'menu' }
   | { kind: 'create'; options: DungeonBlueprint[] }
   | { kind: 'play' }
   | { kind: 'myDungeons' }
+  | { kind: 'simWatch'; blueprint: DungeonBlueprint; raidIndex: number; results: SimWatchResult[] }
   | { kind: 'history'; from: 'menu' | 'myDungeons' }
   | { kind: 'raid'; raid: RaidState }
   | {

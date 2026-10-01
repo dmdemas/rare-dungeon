@@ -867,7 +867,10 @@ export function stepAhead(raid: RaidState): { next: RaidState; destinations: Cel
 }
 
 export function advanceFloor(raid: RaidState, bp: DungeonBlueprint): RaidState {
-  const next = startRaid(bp, raid.floor + 1)
+  // Derive next floor's seed deterministically from the current one so that
+  // the headless sim and the visual Watch produce identical combat on every floor.
+  const nextSeed = (((raid.raidSeed >>> 0) * 0x9e3779b9) + (raid.floor * 0x6c62272e)) >>> 0
+  const next = startRaid(bp, raid.floor + 1, nextSeed)
   // Keep perk mods across floors; refresh stamina to current max
   next.perkMods = { ...raid.perkMods }
   next.friend.vision = friendVision(next.perkMods)

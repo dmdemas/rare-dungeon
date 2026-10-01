@@ -75,7 +75,7 @@ export function RaidView({
   windowed = false,
   onBack,
   forcedPerkSequence,
-  useSimStamina = false,
+  useSimStamina = false,  // kept for ref; see useSimStaminaRef below
 }: Props) {
   const isGridDemo = !!blueprint.isGridDemo
   const pitCliffStyle = blueprint.pitCliffStyle ?? 4
@@ -111,6 +111,7 @@ export function RaidView({
   const blueprintRef = useRef(blueprint)
   const onRaidChangeRef = useRef(onRaidChange)
   const onOutcomeRef = useRef(onOutcome)
+  const useSimStaminaRef = useRef(useSimStamina)
   const pendingRef = useRef<RaidState | null>(null)
   const beforeJumpRef = useRef<RaidState | null>(null)
   const hurtFlashSeen = useRef(0)
@@ -127,6 +128,7 @@ export function RaidView({
   blueprintRef.current = blueprint
   onRaidChangeRef.current = onRaidChange
   onOutcomeRef.current = onOutcome
+  useSimStaminaRef.current = useSimStamina
   perksRef.current = perks
   jumpAnimRef.current = jumpAnim
 
@@ -615,7 +617,7 @@ export function RaidView({
             }
             {
               let advanced = advanceFloor(next, blueprintRef.current)
-              if (useSimStamina) {
+              if (useSimStaminaRef.current) {
                 const base = hardSimFloorStamina(advanced.floor)
                 advanced = {
                   ...advanced,

@@ -237,10 +237,11 @@ function raidLine(step: RaidStep, i: number): string {
 
 function RaidSimPanel({
   sim,
+  onWatchDev,
 }: {
   sim: RaidSim
+  onWatchDev: () => void
 }) {
-  const [devTip, setDevTip] = useState<number | null>(null)
   const done = sim.shown >= sim.steps.length
   const wiped = sim.steps[sim.steps.length - 1]?.wiped ?? false
 
@@ -298,18 +299,13 @@ function RaidSimPanel({
                           ? ' CLEARED — raider won'
                           : ` died floor ${s.floor} · bank $${s.bankAfter.toFixed(2)}`}
                       </div>
-                      <div className="watch-dev-wrap">
-                        <button
-                          type="button"
-                          className="ghost raid-sim-watch-btn"
-                          onClick={() => setDevTip(devTip === idx ? null : idx)}
-                        >
-                          ▶ Watch
-                        </button>
-                        {devTip === idx && (
-                          <span className="watch-dev-tip">⚙️ В разработке</span>
-                        )}
-                      </div>
+                      <button
+                        type="button"
+                        className="ghost raid-sim-watch-btn"
+                        onClick={onWatchDev}
+                      >
+                        ▶ Watch
+                      </button>
                     </div>
                   )
                 })}
@@ -342,6 +338,9 @@ export function MyDungeons({
   const [sim, setSim] = useState<RaidSim | null>(null)
   /** Completed simulation logs keyed by dungeon id — persist across sim open/close. */
   const [simLogs, setSimLogs] = useState<Record<string, RaidSim>>({})
+  /** Show the "Watch — in development" toast */
+  const [watchDevToast, setWatchDevToast] = useState(false)
+  const watchDevTimerRef = useRef<number>(0)
   /** Extend picker value per paused dungeon. */
   const [extendBy, setExtendBy] = useState<Record<string, number>>({})
   const simRunning = sim !== null && sim.shown < sim.steps.length
@@ -391,13 +390,19 @@ export function MyDungeons({
 
   const hasFog = (viewPerks.ranks.fog ?? 0) > 0
 
+  const showWatchDev = () => {
+    setWatchDevToast(true)
+    window.clearTimeout(watchDevTimerRef.current)
+    watchDevTimerRef.current = window.setTimeout(() => setWatchDevToast(false), 2800)
+  }
+
   /** Show sim panel for a dungeon: active sim takes priority, then logged. */
   const renderSimPanel = (bp: DungeonBlueprint) => {
     const isActive = sim?.id === bp.id
-    if (isActive) return <RaidSimPanel sim={sim!} />
+    if (isActive) return <RaidSimPanel sim={sim!} onWatchDev={showWatchDev} />
     const logged = simLogs[bp.id]
     if (!logged) return null
-    return <RaidSimPanel sim={logged} />
+    return <RaidSimPanel sim={logged} onWatchDev={showWatchDev} />
   }
 
   /** Claim is allowed between simulated raids: the raids not yet shown never happen. */
@@ -645,6 +650,15 @@ export function MyDungeons({
           onCancel={() => setConfirmId(null)}
           onConfirm={() => confirmRef.current()}
         />
+      )}
+
+      {watchDevToast && (
+        <div className="watch-dev-toast" role="status">
+          <span className="watch-dev-toast-icon">⚔</span>
+          <span className="watch-dev-toast-text">
+            Watch mode — coming in a future update
+          </span>
+        </div>
       )}
 
     </div>

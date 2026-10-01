@@ -3243,13 +3243,6 @@ body {
   gap: 6px;
 }
 
-.watch-dev-wrap {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
 .raid-sim-watch-btn {
   font-size: 11px;
   padding: 2px 8px;
@@ -3261,19 +3254,45 @@ body {
   opacity: 1;
 }
 
-.watch-dev-tip {
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  background: #1a1a1a;
-  border: 1px solid #444;
-  color: #aaa;
-  font-size: 10px;
-  padding: 4px 8px;
+/* ─── Watch-dev centered toast ─────────────────────────────────────────────── */
+@keyframes watch-dev-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.88); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.watch-dev-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0e0e0e;
+  border: 1px solid #5a3a00;
+  box-shadow: 0 0 0 1px #000, 0 8px 32px rgba(0,0,0,0.75), inset 0 1px 0 #2a1a00;
+  padding: 14px 24px;
   border-radius: 4px;
-  white-space: nowrap;
-  z-index: 10;
+  animation: watch-dev-in 0.18s ease-out both;
   pointer-events: none;
+  max-width: 340px;
+  text-align: center;
+}
+
+.watch-dev-toast-icon {
+  font-size: 20px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.watch-dev-toast-text {
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: #c8a060;
+  text-transform: uppercase;
+  line-height: 1.4;
 }
 
 /* Sim confirm card */

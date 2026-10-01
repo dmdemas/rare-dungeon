@@ -1745,6 +1745,20 @@ body {
   border-color: #fff;
 }
 
+@keyframes nav-pulse {
+  0%, 100% { border-color: #7a7a7a; box-shadow: none; }
+  50% { border-color: #d4a832; box-shadow: 0 0 8px 2px rgba(212, 168, 50, 0.45); }
+}
+
+.nav-btn--pulse {
+  animation: nav-pulse 2s ease-in-out infinite;
+}
+
+.nav-btn--pulse:hover {
+  animation: none;
+  border-color: #fff;
+}
+
 .wallet-chip {
   display: flex;
   align-items: center;
@@ -2797,6 +2811,17 @@ body {
 
 .info-card--how {
   width: min(820px, 100%);
+}
+
+.info-how-notice {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  background: rgba(212, 168, 50, 0.1);
+  border: 1px solid rgba(212, 168, 50, 0.35);
+  border-radius: 6px;
+  font-size: 13px;
+  color: #c9a830;
+  line-height: 1.5;
 }
 
 .info-how-lead {

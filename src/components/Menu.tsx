@@ -82,10 +82,10 @@ export function Menu(props: Props) {
           <img src={assetUrl('/logo-name.png')} alt="RareDungeons" className="brand-logo-img" />
         </div>
         <nav className="top-nav">
-          <button type="button" className="nav-btn" onClick={() => setInfo('how')}>
+          <button type="button" className="nav-btn nav-btn--pulse" onClick={() => setInfo('how')}>
             HOW TO PLAY
           </button>
-          <button type="button" className="nav-btn" onClick={() => setInfo('economy')}>
+          <button type="button" className="nav-btn nav-btn--pulse" onClick={() => setInfo('economy')}>
             ECONOMY
           </button>
         </nav>
@@ -454,6 +454,9 @@ function InfoOverlay({ kind, onClose }: { kind: 'how' | 'economy'; onClose: () =
           />
         ) : (
           <div className="info-how">
+            <p className="info-how-notice">
+              📖 Don't miss the <strong>ECONOMY</strong> section — it explains how the game works and what the idea is all about.
+            </p>
             <p className="info-how-lead">First pick a mode: RAID or CREATE DUNGEON.</p>
             <div className="info-how-cols">
               <section className="info-how-col">

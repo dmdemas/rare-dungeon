@@ -3243,6 +3243,13 @@ body {
   gap: 6px;
 }
 
+.watch-dev-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .raid-sim-watch-btn {
   font-size: 11px;
   padding: 2px 8px;
@@ -3252,6 +3259,21 @@ body {
 
 .raid-sim-watch-btn:hover {
   opacity: 1;
+}
+
+.watch-dev-tip {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: #aaa;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* Sim confirm card */

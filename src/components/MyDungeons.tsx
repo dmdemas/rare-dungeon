@@ -4,6 +4,8 @@ import {
   SOFT,
   claimTaxFrac,
   projectYieldAfterRaids,
+  quoteHardEntry,
+  quoteSoftEntry,
   ticketMintAtWin,
   type EntryQuote,
 } from '../game/economy'
@@ -19,7 +21,7 @@ import {
 import { startRaid } from '../game/raid'
 import { mulberry32 } from '../game/rng'
 import type { DungeonBlueprint } from '../game/types'
-import { applyRaidStep, runEconomyRaid, type RaidStep } from '../game/worldSim'
+import { applyRaidStep, rollRaiderKind, type RaidStep } from '../game/worldSim'
 import { closeNowPayout } from '../game/worldStats'
 import { YieldDash } from './ClosePlan'
 import { DungeonCanvas } from './DungeonCanvas'
@@ -48,8 +50,6 @@ type Props = {
   hardEntryQuote: EntryQuote
   liveSoft: number
   liveHard: number
-  /** Open visual bot-mode simulation for this dungeon. */
-  onWatchSim?: (bp: DungeonBlueprint, friendPickSequence?: string[], raidSeed?: number) => void
 }
 
 function perksFromBlueprint(bp: DungeonBlueprint): SidePerkState<DungeonPerkId> {
@@ -101,37 +101,130 @@ type RaidSim = {
   end?: 'autoClose' | 'claimed'
 }
 
+// ─── Probabilistic simulation (golden-rule survival curves) ──────────────────
+
 /**
- * Real headless raids on the owned layout + baked perks. With a close plan it runs straight
- * to the planned level (or a wipe); without one it runs a random batch.
+ * Complexity score 0 (easy) → 1 (very hard) based on blueprint properties.
+ * Higher = harder for Friend to clear = dungeon lives longer.
+ */
+function dungeonComplexityScore(bp: DungeonBlueprint): number {
+  const wallCount = bp.map?.walls?.size ?? 0
+  const mobCount  = bp.mobSpawns?.length ?? 0
+  const corridor  = bp.isCorridor ?? false
+  const wins      = bp.wins ?? 0
+  const perkTotal = Object.values(bp.dungeonPerks?.ranks ?? {}).reduce((s, r) => s + (r ?? 0), 0)
+
+  let score = 0
+  // Pits
+  if (wallCount >= 12) score += 0.30
+  else if (wallCount >= 9) score += 0.20
+  else if (wallCount >= 6) score += 0.10
+  // Mobs
+  if (mobCount >= 4) score += 0.25
+  else if (mobCount >= 3) score += 0.15
+  else if (mobCount >= 2) score += 0.05
+  // Corridor map
+  if (corridor) score += 0.15
+  // Dungeon perks
+  score += Math.min(0.20, perkTotal * 0.04)
+  // Proven hard: survived more raids than average
+  if (wins >= 12) score += 0.20
+  else if (wins >= 8) score += 0.12
+  else if (wins >= 5) score += 0.06
+
+  return Math.min(1, score)
+}
+
+/**
+ * Per-raid wipe probability, calibrated to golden-rule survival curves.
+ * Hard avg ≈ 7-8 raids (wipe ~12-13%/raid). Easy/complex shifts ±5%.
+ * Soft avg ≈ 3-4 raids (wipe ~28-33%/raid).
+ */
+function dungeonWipeRate(bp: DungeonBlueprint): number {
+  const tier  = bp.tier ?? 'soft'
+  const cx    = dungeonComplexityScore(bp)
+  if (tier === 'hard') {
+    // Complexity 0 → 18% wipe/raid (avg 5.5); complexity 1 → 8% (avg 12.5)
+    // Sweet spot ~50% complexity = 13% ≈ avg 7.7 raids
+    return 0.18 - cx * 0.10
+  }
+  // Soft: complexity 0 → 38% (avg 2.6); complexity 1 → 22% (avg 4.5)
+  return 0.38 - cx * 0.16
+}
+
+/** Floor the raider reached before dying (conditional on NOT wiping). */
+function rollDeathFloor(tier: string, rng: () => number): number {
+  const r = rng()
+  if (tier === 'hard') {
+    // Equal thirds per golden-rule floor curve (30/30/30 split among ~90% deaths)
+    if (r < 0.34) return 1
+    if (r < 0.67) return 2
+    return 3
+  }
+  // Soft: front-loaded deaths (Soft is easier but mobs still hit hard on F1)
+  if (r < 0.50) return 1
+  if (r < 0.80) return 2
+  return 3
+}
+
+/**
+ * Probabilistic simulation using golden-rule survival curves.
+ * No real combat — each raid is a single wipe/survive roll weighted by dungeon complexity.
  */
 function planRaidSim(bp: DungeonBlueprint): RaidSim {
-  const rng = mulberry32((Math.random() * 0x100000000) >>> 0)
-  const toPlan = bp.closeAtWins != null ? bp.closeAtWins - (bp.wins ?? 0) : 0
-  // Run until wipe or SIM_MAX_RAIDS so we can show the dungeon's full lifespan
+  const rng     = mulberry32((Math.random() * 0x100000000) >>> 0)
+  const tier    = bp.tier ?? 'soft'
+  const cfg     = tier === 'hard' ? HARD : SOFT
+  const quote   = tier === 'hard' ? quoteHardEntry(1) : quoteSoftEntry(1)
+  const wipeRate = dungeonWipeRate(bp)
+  const toPlan  = bp.closeAtWins != null ? bp.closeAtWins - (bp.wins ?? 0) : 0
   const planned = toPlan > 0 ? toPlan : SIM_MAX_RAIDS
+
   const steps: RaidStep[] = []
   let end: RaidSim['end']
   let cur = bp
+
   for (let i = 0; i < planned; i++) {
-    const step = runEconomyRaid(cur, rng)
+    const wiped  = rng() < wipeRate
+    const raider = rollRaiderKind(rng)
+    const bank   = (cur.bank ?? cfg.createToBank) + quote.toBank
+    const wins   = cur.wins ?? 0
+    const floor  = wiped ? 3 : rollDeathFloor(tier, rng)
+
+    const step: RaidStep = wiped
+      ? {
+          raider, wiped: true, floor,
+          raiderPaid: quote.cost,
+          bankAfter: bank,
+          winsAfter: wins,
+          payout: bank * cfg.clearRaiderFrac,
+          poolAdd: quote.toPool + bank * cfg.clearFeeFrac,
+          ticketsMinted: 0,
+          friendPickSequence: [],
+          raidSeed: 0,
+        }
+      : {
+          raider, wiped: false, floor,
+          raiderPaid: quote.cost,
+          bankAfter: bank,
+          winsAfter: wins + 1,
+          payout: 0,
+          poolAdd: quote.toPool,
+          ticketsMinted: tier === 'hard' ? ticketMintAtWin(wins + 1) : 0,
+          friendPickSequence: [],
+          raidSeed: 0,
+        }
+
     steps.push(step)
-    if (step.wiped) break
+    if (wiped) break
     if (bp.closeAtWins != null && step.winsAfter >= bp.closeAtWins) {
       end = 'autoClose'
       break
     }
     cur = applyRaidStep(cur, step)
   }
-  return {
-    id: bp.id,
-    name: bp.name,
-    invested: bp.invested ?? 0,
-    planned,
-    steps,
-    shown: 0,
-    end,
-  }
+
+  return { id: bp.id, name: bp.name, invested: bp.invested ?? 0, planned, steps, shown: 0, end }
 }
 
 function raidLine(step: RaidStep, i: number): string {
@@ -144,11 +237,10 @@ function raidLine(step: RaidStep, i: number): string {
 
 function RaidSimPanel({
   sim,
-  onWatch,
 }: {
   sim: RaidSim
-  onWatch?: (step: RaidStep) => void
 }) {
+  const [devTip, setDevTip] = useState<number | null>(null)
   const done = sim.shown >= sim.steps.length
   const wiped = sim.steps[sim.steps.length - 1]?.wiped ?? false
 
@@ -192,7 +284,7 @@ function RaidSimPanel({
           {sim.steps.length >= 1 && (
             <>
               <p className="card-label raid-sim-last-label">
-                LAST {Math.min(3, sim.steps.length)} RAIDS{onWatch ? ' — ▶ Watch to see a raid live' : ''}
+                LAST {Math.min(3, sim.steps.length)} RAIDS — ▶ Watch
               </p>
               <div className="raid-sim-cards">
                 {last3.map((s, idx) => {
@@ -206,11 +298,18 @@ function RaidSimPanel({
                           ? ' CLEARED — raider won'
                           : ` died floor ${s.floor} · bank $${s.bankAfter.toFixed(2)}`}
                       </div>
-                      {onWatch && (
-                        <button type="button" className="ghost raid-sim-watch-btn" onClick={() => onWatch(s)}>
+                      <div className="watch-dev-wrap">
+                        <button
+                          type="button"
+                          className="ghost raid-sim-watch-btn"
+                          onClick={() => setDevTip(devTip === idx ? null : idx)}
+                        >
                           ▶ Watch
                         </button>
-                      )}
+                        {devTip === idx && (
+                          <span className="watch-dev-tip">⚙️ В разработке</span>
+                        )}
+                      </div>
                     </div>
                   )
                 })}
@@ -236,7 +335,6 @@ export function MyDungeons({
   suggestClose,
   softEntryQuote,
   hardEntryQuote,
-  onWatchSim,
 }: Props) {
   const live = owned.filter((d) => d.status !== 'closed')
   const finished = owned.filter((d) => d.status === 'closed').slice().reverse()
@@ -296,15 +394,10 @@ export function MyDungeons({
   /** Show sim panel for a dungeon: active sim takes priority, then logged. */
   const renderSimPanel = (bp: DungeonBlueprint) => {
     const isActive = sim?.id === bp.id
-    const watchHandler = onWatchSim
-      ? (step: RaidStep) => onWatchSim(bp, step.friendPickSequence as string[], step.raidSeed)
-      : undefined
-    if (isActive) {
-      return <RaidSimPanel sim={sim!} onWatch={watchHandler} />
-    }
+    if (isActive) return <RaidSimPanel sim={sim!} />
     const logged = simLogs[bp.id]
     if (!logged) return null
-    return <RaidSimPanel sim={logged} onWatch={watchHandler} />
+    return <RaidSimPanel sim={logged} />
   }
 
   /** Claim is allowed between simulated raids: the raids not yet shown never happen. */

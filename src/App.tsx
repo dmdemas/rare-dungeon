@@ -267,17 +267,7 @@ export default function App() {
   /** Result of the last sim-watch raid, waiting for the user to press Next. */
   const [simWatchPending, setSimWatchPending] = useState<SimWatchResult | null>(null)
 
-  /** Forced perk sequence for the current sim-watch raid (ensures visual replay matches headless). */
-  const [simWatchPerkSeq, setSimWatchPerkSeq] = useState<string[] | undefined>(undefined)
-
-  /** Open bot-mode visual simulation for an owned dungeon, optionally replaying a specific raid. */
-  const startSimWatch = (bp: DungeonBlueprint, friendPickSequence?: string[], raidSeed?: number) => {
-    setActiveBlueprint(bp)
-    setSimWatchRaid(startRaid(bp, 1, raidSeed))
-    setSimWatchPending(null)
-    setSimWatchPerkSeq(friendPickSequence)
-    setScreen({ kind: 'simWatch', blueprint: bp, raidIndex: 1, results: [] })
-  }
+  // startSimWatch — disabled while Watch is "in development"; re-enable when visual replay is ready
 
   const onSimWatchRaidChange = useCallback((r: RaidState) => setSimWatchRaid(r), [])
 
@@ -791,7 +781,6 @@ export default function App() {
           hardEntryQuote={hardEntryQuote}
           liveSoft={liveSoft}
           liveHard={liveHard}
-          onWatchSim={(bp, seq, seed) => startSimWatch(bp, seq, seed)}
           suggestClose={(bp) => {
             const tier = bp.tier ?? 'soft'
             if (tier === 'hard') {
@@ -856,7 +845,7 @@ export default function App() {
             onRaidChange={onSimWatchRaidChange}
             onOutcome={onSimWatchOutcome}
             onBack={closeSimWatch}
-            forcedPerkSequence={simWatchPerkSeq as any}
+            forcedPerkSequence={undefined}
             useSimStamina
             botMode
             windowed

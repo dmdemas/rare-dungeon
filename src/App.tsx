@@ -857,6 +857,7 @@ export default function App() {
             onOutcome={onSimWatchOutcome}
             onBack={closeSimWatch}
             forcedPerkSequence={simWatchPerkSeq as any}
+            useSimStamina
             botMode
             windowed
           />

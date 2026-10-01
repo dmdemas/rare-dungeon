@@ -18,6 +18,8 @@ import {
 } from '../game/perks'
 import { mulberry32 } from '../game/rng'
 import { advanceFloor, stepAhead } from '../game/raid'
+import { hardSimFloorStamina } from '../game/economy'
+import { friendMaxStamina } from '../game/perks/effects'
 import type { Cell, DungeonBlueprint, RaidState } from '../game/types'
 import { DungeonCanvas, type DashTrailCell, type JumpAnim } from './DungeonCanvas'
 import { PerkOfferOverlay } from './perks/PerkOfferOverlay'
@@ -54,6 +56,11 @@ type Props = {
   onBack?: () => void
   /** If provided, bot picks these perks in order (floor 0→1→2) instead of random offers. Guarantees replay fidelity. */
   forcedPerkSequence?: import('../game/perks').FriendPerkId[]
+  /**
+   * When true (sim watch mode), floor transitions use the sim stamina table (20/18/18)
+   * instead of the real-play table (20/17/13) so the Watch outcome matches the headless result.
+   */
+  useSimStamina?: boolean
 }
 
 export function RaidView({
@@ -68,6 +75,7 @@ export function RaidView({
   windowed = false,
   onBack,
   forcedPerkSequence,
+  useSimStamina = false,
 }: Props) {
   const isGridDemo = !!blueprint.isGridDemo
   const pitCliffStyle = blueprint.pitCliffStyle ?? 4
@@ -605,7 +613,18 @@ export function RaidView({
               onOutcomeRef.current('won', next.floor)
               return
             }
-            onRaidChangeRef.current(advanceFloor(next, blueprintRef.current))
+            {
+              let advanced = advanceFloor(next, blueprintRef.current)
+              if (useSimStamina) {
+                const base = hardSimFloorStamina(advanced.floor)
+                advanced = {
+                  ...advanced,
+                  floorBaseStamina: base,
+                  friend: { ...advanced.friend, stamina: friendMaxStamina(advanced.perkMods, base) },
+                }
+              }
+              onRaidChangeRef.current(advanced)
+            }
             return
           }
           if (next.phase === 'won') {
